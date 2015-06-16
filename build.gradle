@@ -1,0 +1,23 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+eclipse.project {
+  natures 'org.springsource.ide.eclipse.gradle.core.nature', 'org.eclipse.jdt.core.javanature'
+}
+
+version = '1.0'
+jar {
+  manifest {
+    attributes 'Implementation-Title': 'Space Attack',
+               'Implementation-Version': version,
+               'Main-Class': 'spaceattack.main.App'
+  }
+}
+
+task runJar(dependsOn:jar) << {
+  javaexec { main="-jar"; args jar.archivePath }
+}
+
+repositories {
+  mavenCentral()
+}
