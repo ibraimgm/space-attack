@@ -5,3 +5,5 @@
 .settings/
 .gradle/
 *.launch
+run.sh
+run.bat
