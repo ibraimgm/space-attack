@@ -1,11 +1,15 @@
-apply plugin: 'java'
-apply plugin: 'eclipse'
+plugins {
+  id 'java'
+  id 'eclipse'
+  id 'com.github.johnrengelman.shadow' version '1.2.1'
+}
 
 eclipse.project {
   natures 'org.springsource.ide.eclipse.gradle.core.nature', 'org.eclipse.jdt.core.javanature'
 }
 
 version = '1.0'
+
 jar {
   manifest {
     attributes 'Implementation-Title': 'Space Attack',
@@ -14,10 +18,24 @@ jar {
   }
 }
 
-task runJar(dependsOn:jar) << {
-  javaexec { main="-jar"; args jar.archivePath }
+task scripts {
+  doLast {
+    File sh = file('run.sh')
+    sh.write('#!/bin/bash\n\n')
+    sh << 'gradle shadowJar\n'
+    sh << 'java -jar ' << shadowJar.archivePath
+  
+    File bat = file('run.bat')
+    bat.write('@echo off\n\n')
+    bat << 'cmd /c "gradle shadowJar"\n\n'
+    bat << 'java -jar ' << shadowJar.archivePath
+  }
 }
 
 repositories {
   mavenCentral()
+}
+
+dependencies {
+  compile group: 'net.java.dev.jna', name: 'jna', version: '4.1.0'
 }
