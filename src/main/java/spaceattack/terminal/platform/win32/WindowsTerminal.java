@@ -27,6 +27,7 @@ public class WindowsTerminal implements Terminal
   private int hConsole = -1;
   private int currentFg = TerminalColor.DULL_WHITE;
   private int currentBg = TerminalColor.DULL_BLACK;
+  private CONSOLE_CURSOR_INFO cursorInfo;
   private CONSOLE_SCREEN_BUFFER_INFO info;
   
   private short colorToWinColor(int color, boolean isForeground)  
@@ -98,13 +99,12 @@ public class WindowsTerminal implements Terminal
     
     // backup of the current console attributes
     info = new CONSOLE_SCREEN_BUFFER_INFO();
+    cursorInfo = new CONSOLE_CURSOR_INFO();
     Kernel32.INSTANCE.GetConsoleScreenBufferInfo(hConsole, info);
+    Kernel32.INSTANCE.GetConsoleCursorInfo(hConsole, cursorInfo);
     
     // make the cursor disappear
-    CONSOLE_CURSOR_INFO cursor = new CONSOLE_CURSOR_INFO();
-    cursor.dwSize = 1;
-    cursor.bVisible = false;
-    Kernel32.INSTANCE.SetConsoleCursorInfo(hConsole, cursor);
+    displayCursor(false);  
     
     // sets a starting foreground/background
     textForeground(TerminalColor.DULL_WHITE);
@@ -120,14 +120,11 @@ public class WindowsTerminal implements Terminal
   @Override
   public void tearDown()
   {
-    // return text to normal
+    // restore text colors
     Kernel32.INSTANCE.SetConsoleTextAttribute(hConsole, info.wAttributes);    
     
-    // make the cursor visible again
-    CONSOLE_CURSOR_INFO cursor = new CONSOLE_CURSOR_INFO();
-    cursor.dwSize = 1;
-    cursor.bVisible = true;
-    Kernel32.INSTANCE.SetConsoleCursorInfo(hConsole, cursor);
+    // restore cursor configuration
+    Kernel32.INSTANCE.SetConsoleCursorInfo(hConsole, cursorInfo);
   }
 
   @Override
@@ -156,6 +153,15 @@ public class WindowsTerminal implements Terminal
     c.Y = (short)y;
     
     Kernel32.INSTANCE.SetConsoleCursorPosition(hConsole, c);    
+  }
+  
+  @Override
+  public void displayCursor(boolean visible)
+  {
+    CONSOLE_CURSOR_INFO cursor = new CONSOLE_CURSOR_INFO();
+    cursor.dwSize = cursorInfo.dwSize;
+    cursor.bVisible = visible;
+    Kernel32.INSTANCE.SetConsoleCursorInfo(hConsole, cursor);
   }
 
   @Override

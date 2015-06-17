@@ -22,5 +22,6 @@ public interface Kernel32 extends StdCallLibrary
                                       IntByReference lpNumberOfCharsWritten);
   
   boolean SetConsoleTextAttribute(int hConsoleOutput, short wAttributes);
+  boolean GetConsoleCursorInfo(int hConsoleOutput, CONSOLE_CURSOR_INFO lpConsoleCursorInfo);
   boolean SetConsoleCursorInfo(int hConsoleOutput, CONSOLE_CURSOR_INFO lpConsoleCursorInfo);
 }

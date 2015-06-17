@@ -11,6 +11,7 @@ public interface Terminal
   
   void clrscr();
   void gotoxy(int x, int y);
+  void displayCursor(boolean visible);
   void textBackground(int color);
   void textForeground(int color);
   int currentBackground();
