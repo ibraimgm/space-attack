@@ -217,9 +217,34 @@ public class WindowsTerminal implements Terminal
   @Override
   public VKey readKey()
   {
-    Msvcrt.INSTANCE._getch();
+    int c = -1;
     
-    // TODO Still need to implement key handling
-    return null;
+    // read the input
+    if (Msvcrt.INSTANCE._kbhit() != 0)
+      c = Msvcrt.INSTANCE._getch();
+    
+    // check if it is a special key
+    if (c == 224)
+    {
+      c = Msvcrt.INSTANCE._getch();
+      
+      switch(c)
+      {
+        case 75: return VKey.LEFT_ARROW;
+        case 77: return VKey.RIGHT_ARROW;
+        case 72: return VKey.UP_ARROW;
+        case 80: return VKey.DOWN_ARROW;
+        default: c = -1;
+      }
+    }
+    
+    // if we're here, it should be a "normal" key
+    switch(c)
+    {
+      case 32: return VKey.SPACE;
+      case 13: return VKey.ENTER;
+      case 27: return VKey.ESC;      
+      default: return VKey.NONE;
+    }
   }
 }
