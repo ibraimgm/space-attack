@@ -12,5 +12,6 @@ public interface Screen
   void clear(int color);
   void blit();
   
-  void drawChar(int x, int y, char c);
+  void drawText(int x, int y, char c);  
+  void drawText(int x, int y, String s);
 }

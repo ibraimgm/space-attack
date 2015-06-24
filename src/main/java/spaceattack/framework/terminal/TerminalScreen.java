@@ -68,10 +68,17 @@ public final class TerminalScreen implements Screen
   }
 
   @Override
-  public void drawChar(int x, int y, char c)
+  public void drawText(int x, int y, char c)
   {
     TerminalFactory.getInstance().gotoxy(this.x + x, this.y + y);
     TerminalFactory.getInstance().putc(c);
+  }
+
+  @Override
+  public void drawText(int x, int y, String s)
+  {
+    TerminalFactory.getInstance().gotoxy(this.x + x, this.y + y);
+    TerminalFactory.getInstance().puts(s);        
   }
 
 }
