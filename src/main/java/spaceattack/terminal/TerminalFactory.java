@@ -18,7 +18,7 @@ public final class TerminalFactory
     String s = System.getProperty("os.name").toLowerCase();
     
     if (s.indexOf("win") >= 0)
-      terminal = new WindowsTerminal();
+      terminal = new BufferedTerminal(new WindowsTerminal(), 80, 24, TerminalColor.VIVID_BLACK, TerminalColor.DULL_WHITE);
     else if (s.indexOf("linux") >= 0)
       terminal = null;
     
