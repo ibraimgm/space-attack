@@ -10,19 +10,19 @@ public final class MainMenu implements Scenario
 {
 
   @Override
-  public void init()
+  public void init(GameIO io)
   {
     // Nothing do do here
   }
 
   @Override
-  public void pause()
+  public void pause(GameIO io)
   {
     // Nothing to do here
   }
 
   @Override
-  public void resume()
+  public void resume(GameIO io)
   {
     // Nothing to do here 
   }
@@ -30,7 +30,7 @@ public final class MainMenu implements Scenario
   @Override
   public void update(GameIO io, double delta)
   {    
-    if (io.getKey() == VKey.ENTER) 
+    if (io.consumeKey() == VKey.ENTER) 
       io.requestQuit();
   }
 
@@ -45,9 +45,9 @@ public final class MainMenu implements Scenario
   }
 
   @Override
-  public Scenario quit()
+  public Scenario quit(GameIO io)
   {
-    return null;
+    return new Gameplay();
   }
 
 }

@@ -2,10 +2,10 @@ package spaceattack.framework;
 
 public interface Scenario
 {
-  void init();
-  void pause();
-  void resume();
+  void init(GameIO io);
+  void pause(GameIO io);
+  void resume(GameIO io);
   void update(GameIO io, double delta);
   void render(GameIO io, double delta);
-  Scenario quit();
+  Scenario quit(GameIO io);
 }

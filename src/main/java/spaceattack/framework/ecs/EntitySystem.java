@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import spaceattack.framework.GameIO;
 
@@ -16,6 +17,7 @@ public final class EntitySystem
   HashMap<Class<? extends Component>, HashMap<Long, ? extends Component>> componentStore = new HashMap<Class<? extends Component>, HashMap<Long, ? extends Component>>();
   List<System> logicSystems = new ArrayList<System>();
   List<System> renderSystems = new ArrayList<System>();
+  List<Consumer<EntitySystem>> pendingChanges = new ArrayList<Consumer<EntitySystem>>();
   
   public long newEntity()
   {
@@ -78,6 +80,24 @@ public final class EntitySystem
       comps.remove(e);
   }
   
+  public void requestChange(Consumer<EntitySystem> request)
+  {
+    pendingChanges.add(request);
+  }
+  
+  public void requestRemove(Long e)
+  {
+    requestChange(es -> es.removeEntity(e));
+  }
+  
+  public void applyChanges()
+  {
+    for (Consumer<EntitySystem> change : pendingChanges)
+      change.accept(this); 
+    
+    pendingChanges.clear();
+  }
+  
   public void addLogicSystem(System s)
   {
     logicSystems.add(s);
@@ -90,13 +110,23 @@ public final class EntitySystem
   
   public void runLogicSystems(GameIO io, double delta)
   {
+    applyChanges();
+    
     for (System s : logicSystems)
+    {
       s.execute(this, io, delta);
+      applyChanges();
+    }
   }
   
   public void runRenderSystems(GameIO io, double delta)
   {
+    applyChanges();
+    
     for (System s : renderSystems)
+    {
       s.execute(this, io, delta);
+      applyChanges();
+    }
   }
 }

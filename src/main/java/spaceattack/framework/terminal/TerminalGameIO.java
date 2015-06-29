@@ -1,24 +1,52 @@
 package spaceattack.framework.terminal;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import spaceattack.framework.AbstractGameIO;
 import spaceattack.framework.Screen;
+import spaceattack.terminal.Terminal;
 import spaceattack.terminal.TerminalFactory;
 import spaceattack.terminal.VKey;
 
 public final class TerminalGameIO extends AbstractGameIO
 {
+  private List<VKey> inputs = new ArrayList<VKey>();
   private Screen mainScreen = new TerminalScreen(0, 0, 80, 24);
+  
 
   @Override
-  public VKey getKey()
+  public VKey peekKey()
   {
-    return TerminalFactory.getInstance().readKey();
+    if (inputs.isEmpty())
+      return VKey.NONE;
+    else
+      return inputs.get(0);
+  }
+  
+  @Override
+  public VKey consumeKey()
+  {
+    if (inputs.isEmpty())
+      return VKey.NONE;
+    else
+      return inputs.remove(0);    
   }
 
   @Override
   public void fetchInputs()
   {
-    // Nothing to do here. We do not have an input queue or anything like that.
+    Terminal t = TerminalFactory.getInstance();
+    VKey k;
+    
+    do
+    {
+      k = t.readKey();
+      
+      if (k != VKey.NONE)
+        inputs.add(k);
+      
+    } while (k != VKey.NONE);
   }
 
   @Override

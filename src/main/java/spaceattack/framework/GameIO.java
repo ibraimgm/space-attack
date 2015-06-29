@@ -5,7 +5,8 @@ import spaceattack.terminal.VKey;
 public interface GameIO
 {
   // input
-  VKey getKey();
+  VKey peekKey();
+  VKey consumeKey();
   void fetchInputs();
 
   // output

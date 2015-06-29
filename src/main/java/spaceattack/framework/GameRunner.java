@@ -18,17 +18,17 @@ public class GameRunner
       switch (e)
       {
         case GEvents.EVT_PAUSE:
-          scenario.pause();
+          scenario.pause(io);
           io.consumeEvent();
           break;
           
         case GEvents.EVT_RESUME:
-          scenario.resume();
+          scenario.resume(io);
           io.consumeEvent();
           break;
           
         case GEvents.EVT_QUIT:
-          other = scenario.quit();
+          other = scenario.quit(io);
           io.consumeEvent();
           handled = false;
           break;
@@ -38,10 +38,15 @@ public class GameRunner
     
     // if the scenariop changes, drop every pending event
     if (other != scenario)
+    {
       while (io.peekEvent() != GEvents.EVT_NONE)
         io.consumeEvent();
+      
+      if (other != null)
+        other.init(io);
+    }
     
-    // return the 'new' scenario
+    // return the 'new' scenario        
     return other;
   }
   
@@ -51,7 +56,7 @@ public class GameRunner
     double lag = 0.0;
     double ms = 1000.0 / desiredFps;
     
-    scenario.init();
+    scenario.init(io);
     
     while (scenario != null)
     {
@@ -60,6 +65,8 @@ public class GameRunner
       double elapsed = current - previous;
       previous = current;
       lag += elapsed;
+      
+      io.fetchInputs();
       
       while ((lag >= ms) && (scenario != null))
       {
