@@ -7,8 +7,8 @@ public final class BufferedTerminal implements Terminal
   int currX, currY, currBg, currFg;
   BufferData[] current;
   BufferData[] changed;
-  
-  
+
+
   public BufferedTerminal(Terminal inner, int width, int height, int initialBg, int initialFg)
   {
     this.inner = inner;
@@ -18,16 +18,16 @@ public final class BufferedTerminal implements Terminal
     this.currY = 0;
     this.currBg = initialBg;
     this.currFg = initialFg;
-    
+
     current = new BufferData[width * height];
     changed = new BufferData[width * height];
-    
+
     for (int i = 0; i < width * height; ++i)
     {
       current[i] = new BufferData(initialBg, initialFg);
       changed[i] = new BufferData(initialBg, initialFg);
     }
-    
+
     // setup the inner terminal
     inner.setup();
     inner.textForeground(initialFg);
@@ -58,12 +58,12 @@ public final class BufferedTerminal implements Terminal
         // compute x and y
         int x = i > (width - 1) ? i % width : i;
         int y = i >= width ? i / width : 0;
-        
+
         inner.gotoxy(x, y);
         inner.textBackground(changed[i].bg);
         inner.textForeground(changed[i].fg);
         inner.putc(changed[i].c);
-        
+
         current[i].bg = changed[i].bg;
         current[i].fg = changed[i].fg;
         current[i].c = changed[i].c;
@@ -91,7 +91,7 @@ public final class BufferedTerminal implements Terminal
   @Override
   public void displayCursor(boolean visible)
   {
-    inner.displayCursor(visible);    
+    inner.displayCursor(visible);
   }
 
   @Override
@@ -129,9 +129,9 @@ public final class BufferedTerminal implements Terminal
     changed[i].fg = currFg;
     changed[i].c = c;
     ++currX;
-    
+
     if (currX >= width)
-      ++currY;    
+      ++currY;
   }
 
   @Override
@@ -145,13 +145,13 @@ public final class BufferedTerminal implements Terminal
   {
     return inner.readKey();
   }
-  
+
   private class BufferData
   {
     public int bg;
     public int fg;
     public char c;
-    
+
     public BufferData(int bg, int fg)
     {
       this.bg = bg;

@@ -9,7 +9,7 @@ public final class TerminalScreen implements Screen
   private int y;
   private int width;
   private int height;
-  
+
   public TerminalScreen(int x, int y, int width, int height)
   {
     this.x = x;
@@ -51,13 +51,13 @@ public final class TerminalScreen implements Screen
   @Override
   public void setForeground(int color)
   {
-    TerminalFactory.getInstance().textForeground(color);    
+    TerminalFactory.getInstance().textForeground(color);
   }
 
   @Override
   public void clear(int color)
   {
-    setBackground(color);    
+    setBackground(color);
     TerminalFactory.getInstance().clrscr();
   }
 
@@ -78,7 +78,7 @@ public final class TerminalScreen implements Screen
   public void drawText(int x, int y, String s)
   {
     TerminalFactory.getInstance().gotoxy(this.x + x, this.y + y);
-    TerminalFactory.getInstance().puts(s);        
+    TerminalFactory.getInstance().puts(s);
   }
 
 }

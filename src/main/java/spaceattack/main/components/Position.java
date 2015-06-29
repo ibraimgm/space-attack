@@ -11,28 +11,28 @@ public final class Position implements Component
     NO_DRAW,
     KEEP_BOUNDS
   };
-  
+
   public int x;
   public int y;
   public OOB oob;
-  
+
   public Position(int x, int y, OOB oob)
   {
     this.x = x;
     this.y = y;
     this.oob = oob;
   }
-  
+
   public Position(int x, int y)
   {
     this.x = x;
     this.y = y;
     this.oob = OOB.NO_DRAW;
   }
-  
+
   public boolean isOOB(Screen screen)
   {
-    return 
+    return
         (x < screen.getX()) ||
         (y < screen.getY()) ||
         (x >= screen.getWidth()) ||

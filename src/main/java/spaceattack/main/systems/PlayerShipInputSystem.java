@@ -14,7 +14,7 @@ public final class PlayerShipInputSystem implements System
   public void execute(EntitySystem es, GameIO io, double delta)
   {
     for (Entry<Long, PlayerShipInput> item : es.getAllComponents(PlayerShipInput.class))
-      item.getValue().execute(item.getKey(), es, io);              
+      item.getValue().execute(item.getKey(), es, io);
   }
 
 }

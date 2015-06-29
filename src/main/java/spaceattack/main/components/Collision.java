@@ -12,9 +12,9 @@ public final class Collision implements Component
     PLAYER,
     EARTH_ORBIT
   };
-  
+
   public Type type;
-  
+
   public Collision(Type type)
   {
     this.type = type;

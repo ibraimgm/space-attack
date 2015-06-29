@@ -6,9 +6,9 @@ import java.util.List;
 import com.sun.jna.Structure;
 
 public class COORD extends Structure
-{  
+{
   public static class ByValue extends COORD implements Structure.ByValue {};
-  
+
   public short X;
   public short Y;
 
@@ -16,11 +16,11 @@ public class COORD extends Structure
   @Override
   protected List getFieldOrder()
   {
-    return Arrays.asList(new String[] 
-        { 
+    return Arrays.asList(new String[]
+        {
           "X",
           "Y"
-        }); 
+        });
   }
 
 }

@@ -32,19 +32,19 @@ public final class Gameplay implements Scenario
     es.addLogicSystem(new PlayerShipInputSystem());
     es.addLogicSystem(new TimedMoveSystem());
     es.addLogicSystem(new TimedShotSystem());
-    es.addLogicSystem(new BoundsCheckSystem());    
+    es.addLogicSystem(new BoundsCheckSystem());
     es.addLogicSystem(new CollisionSystem());
     es.addRenderSystem(new DrawSystem());
-    
+
     // the planet orbit, where the aliens cannot reach!
     createEarth(io);
-    
+
     // our lone savior
     createPlayer(io);
-    
+
     // the evil aliens
     createAliens(io);
-  }  
+  }
 
   @Override
   public void pause(GameIO io)
@@ -65,13 +65,13 @@ public final class Gameplay implements Scenario
       io.requestQuit();
     }
     else
-      es.runLogicSystems(io, delta);     
+      es.runLogicSystems(io, delta);
   }
 
   @Override
   public void render(GameIO io, double delta)
   {
-    io.mainScreen().clear(TerminalColor.DULL_BLACK);    
+    io.mainScreen().clear(TerminalColor.DULL_BLACK);
     es.runRenderSystems(io, delta);
     io.mainScreen().blit();
   }
@@ -81,43 +81,43 @@ public final class Gameplay implements Scenario
   {
     return null;
   }
-  
+
   private void createEarth(GameIO io)
-  {    
+  {
     Screen s = io.mainScreen();
-    
+
     for (int i = 0; i < s.getWidth(); ++i)
     {
       long id = es.newEntity();
-      
+
       es.putComponent(id, new Position(i, s.getHeight() - 1, OOB.KEEP_BOUNDS));
       es.putComponent(id, new Draw(TerminalColor.VIVID_CYAN, TerminalColor.DULL_BLACK, '~'));
       es.putComponent(id, new Collision(Collision.Type.EARTH_ORBIT));
     }
   }
-  
+
   private void createPlayer(GameIO io)
   {
     long id = es.newEntity();
     Screen s = io.mainScreen();
-    
+
     es.putComponent(id, new Position(s.getWidth() / 2, s.getHeight() - 2, OOB.KEEP_BOUNDS));
     es.putComponent(id, new Draw(TerminalColor.VIVID_WHITE, TerminalColor.DULL_BLACK, 'M'));
     es.putComponent(id, new PlayerShipInput());
     es.putComponent(id, new Collision(Collision.Type.PLAYER));
   }
-  
+
   private void createAliens(GameIO io)
   {
     Screen s = io.mainScreen();
     Random r = new Random();
-    
+
     // the dreaded T's
     for (int i = 0; i < s.getWidth(); i += 2)
     {
-      long id = es.newEntity();   
+      long id = es.newEntity();
       int fireRate = (r.nextInt(15) + 1) * 700;
-      
+
       es.putComponent(id, new Position(i, 0, OOB.KEEP_BOUNDS));
       es.putComponent(id, new Draw(TerminalColor.VIVID_YELLOW, TerminalColor.DULL_BLACK, 'T'));
       es.putComponent(id, new TimedMove(0, 1, true, 4000));

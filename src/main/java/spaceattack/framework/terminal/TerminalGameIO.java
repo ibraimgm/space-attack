@@ -13,7 +13,7 @@ public final class TerminalGameIO extends AbstractGameIO
 {
   private List<VKey> inputs = new ArrayList<VKey>();
   private Screen mainScreen = new TerminalScreen(0, 0, 80, 24);
-  
+
 
   @Override
   public VKey peekKey()
@@ -23,14 +23,14 @@ public final class TerminalGameIO extends AbstractGameIO
     else
       return inputs.get(0);
   }
-  
+
   @Override
   public VKey consumeKey()
   {
     if (inputs.isEmpty())
       return VKey.NONE;
     else
-      return inputs.remove(0);    
+      return inputs.remove(0);
   }
 
   @Override
@@ -38,14 +38,14 @@ public final class TerminalGameIO extends AbstractGameIO
   {
     Terminal t = TerminalFactory.getInstance();
     VKey k;
-    
+
     do
     {
       k = t.readKey();
-      
+
       if (k != VKey.NONE)
         inputs.add(k);
-      
+
     } while (k != VKey.NONE);
   }
 
@@ -58,9 +58,9 @@ public final class TerminalGameIO extends AbstractGameIO
   @Override
   public Screen createScreen(Screen source, int x, int y, int width, int height)
   {
-    return new TerminalScreen(source.getX() + x, 
-                              source.getY() + y, 
-                              width, 
+    return new TerminalScreen(source.getX() + x,
+                              source.getY() + y,
+                              width,
                               height);
   }
 

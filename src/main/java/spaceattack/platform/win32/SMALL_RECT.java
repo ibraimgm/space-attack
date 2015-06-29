@@ -16,7 +16,7 @@ public class SMALL_RECT extends Structure
   @Override
   protected List getFieldOrder()
   {
-    return Arrays.asList(new String[] 
+    return Arrays.asList(new String[]
         {
          "Left",
          "Top",

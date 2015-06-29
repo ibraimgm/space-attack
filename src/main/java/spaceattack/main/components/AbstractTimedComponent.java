@@ -21,8 +21,8 @@ public class AbstractTimedComponent implements Component
   {
     if (triggered)
       return;
-    
-    timeLeft -= delta;    
+
+    timeLeft -= delta;
     triggered = timeLeft <= 0;
   }
 

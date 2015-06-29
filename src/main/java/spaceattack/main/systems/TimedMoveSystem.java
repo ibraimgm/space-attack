@@ -19,20 +19,20 @@ public final class TimedMoveSystem implements System
       Long id = item.getKey();
       TimedMove tm = item.getValue();
       Position p = es.getComponent(id, Position.class);
-      
+
       // we have no reason to do anything in this case
       if (p == null)
         continue;
-      
+
       // consume time
       tm.step(delta);
-      
+
       // time's up!
       if (tm.triggered())
       {
         p.x += tm.deltaX;
         p.y += tm.deltaY;
-        
+
         if (tm.repeatable)
           tm.reset();
         else

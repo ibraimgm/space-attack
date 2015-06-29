@@ -24,13 +24,13 @@ public final class MainMenu implements Scenario
   @Override
   public void resume(GameIO io)
   {
-    // Nothing to do here 
+    // Nothing to do here
   }
 
   @Override
   public void update(GameIO io, double delta)
-  {    
-    if (io.consumeKey() == VKey.ENTER) 
+  {
+    if (io.consumeKey() == VKey.ENTER)
       io.requestQuit();
   }
 
@@ -38,7 +38,7 @@ public final class MainMenu implements Scenario
   public void render(GameIO io, double delta)
   {
     Screen main = io.mainScreen();
-    
+
     main.clear(TerminalColor.DULL_BLACK);
     main.drawText(10, 10, "This is the main screen - press enter");
     main.blit();

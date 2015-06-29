@@ -8,7 +8,7 @@ public final class Draw implements Component
   public int bg;
   public char c;
   public boolean visible = true;
-  
+
   public Draw(int fg, int bg, char c)
   {
     this.fg = fg;

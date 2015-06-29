@@ -1,7 +1,7 @@
 package spaceattack.terminal;
 
 public final class TerminalColor
-{  
+{
  //colors based on ANSI standard
  private static final int INTENSITY_DULL  = 0;
  private static final int INTENSITY_VIVID = 60;
@@ -14,11 +14,11 @@ public final class TerminalColor
  private static final int COLOR_MAGENTA = 5;
  private static final int COLOR_CYAN    = 6;
  private static final int COLOR_WHITE   = 7;
- 
+
  // colors usable by the user
- public static final int NO_COLOR            = -2;          
+ public static final int NO_COLOR            = -2;
  public static final int COLOR_UNCHANGED     = -1;
- 
+
  public static final int DULL_BLACK   = INTENSITY_DULL + COLOR_BLACK;
  public static final int DULL_RED     = INTENSITY_DULL + COLOR_RED;
  public static final int DULL_GREEN   = INTENSITY_DULL + COLOR_GREEN;
@@ -36,7 +36,7 @@ public final class TerminalColor
  public static final int VIVID_MAGENTA = INTENSITY_VIVID + COLOR_MAGENTA;
  public static final int VIVID_CYAN    = INTENSITY_VIVID + COLOR_CYAN;
  public static final int VIVID_WHITE   = INTENSITY_VIVID + COLOR_WHITE;
- 
+
  // aux convert methods
  public static int charToColor(char c)
  {
@@ -50,7 +50,7 @@ public final class TerminalColor
      case 'm': return DULL_MAGENTA;
      case 'c': return DULL_CYAN;
      case 'w': return DULL_WHITE;
-     
+
      case 'K': return VIVID_BLACK;
      case 'R': return VIVID_RED;
      case 'G': return VIVID_GREEN;
@@ -59,9 +59,9 @@ public final class TerminalColor
      case 'M': return VIVID_MAGENTA;
      case 'C': return VIVID_CYAN;
      case 'W': return VIVID_WHITE;
-     
+
      case '_': return COLOR_UNCHANGED;
-          
+
      default: return NO_COLOR;
    }
  }

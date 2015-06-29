@@ -11,18 +11,18 @@ public final class PlayerShipInput implements Component
   public void execute(long self, EntitySystem es, GameIO io)
   {
     Position p = es.getComponent(self, Position.class);
-    
+
     if (p != null)
       switch (io.peekKey())
       {
         case LEFT_ARROW:
           p.x--;
           break;
-          
+
         case RIGHT_ARROW:
           p.x++;
           break;
-          
+
         case SPACE:
           es.requestChange(ess -> {
             long id = ess.newEntity();
@@ -32,10 +32,10 @@ public final class PlayerShipInput implements Component
             ess.putComponent(id, new Collision(Collision.Type.PLAYER_SHOT));
           });
           break;
-          
-        default: break;  
+
+        default: break;
       }
-    
+
     io.consumeKey();
   }
 }
