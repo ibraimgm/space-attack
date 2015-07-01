@@ -3,9 +3,9 @@ package spaceattack.main.systems;
 import java.util.Map.Entry;
 
 import spaceattack.framework.GameIO;
-import spaceattack.framework.Screen;
 import spaceattack.framework.ecs.EntitySystem;
 import spaceattack.framework.ecs.System;
+import spaceattack.main.components.BoundsCheck;
 import spaceattack.main.components.Draw;
 import spaceattack.main.components.Position;
 
@@ -15,37 +15,39 @@ public final class BoundsCheckSystem implements System
   @Override
   public void execute(EntitySystem es, GameIO io, double delta)
   {
-    Screen s = io.mainScreen();
-
-    for (Entry<Long, Position> item : es.getAllComponents(Position.class))
+    for (Entry<Long, BoundsCheck> item : es.getAllComponents(BoundsCheck.class))
     {
       Long id = item.getKey();
-      Position p = item.getValue();
+      BoundsCheck b = item.getValue();
+      Position p = es.getComponent(id, Position.class);
 
-      if (p.isOOB(s))
-        switch (p.oob)
+      if (p == null)
+        return;
+
+      if (b.isOOB(p.x, p.y))
+        switch (b.behavior)
         {
-          case VANISH:
+          case DESTROY_ENTITY:
             es.requestRemove(id);
             break;
 
-          case NO_DRAW:
+          case MAKE_INVISIBLE:
             Draw d = es.getComponent(id, Draw.class);
 
             if (d != null)
               d.visible = false;
             break;
 
-          case KEEP_BOUNDS:
-            if (p.x < s.getX())
-              p.x = s.getX();
-            else if (p.x >= s.getWidth())
-              p.x = s.getWidth() - 1;
+          case ADJUST_POSITION:
+            if (p.x < b.minX)
+              p.x = b.minX;
+            else if (p.x > b.maxX)
+              p.x = b.maxX;
 
-            if (p.y < s.getY())
-              p.y = s.getY();
-            else if (p.y >= s.getHeight())
-              p.y = s.getHeight() - 1;
+            if (p.y < b.minY)
+              p.y = b.minY;
+            else if (p.y > b.maxY)
+              p.y = b.maxY;
             break;
         }
     }

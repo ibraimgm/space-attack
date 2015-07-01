@@ -6,11 +6,12 @@ import spaceattack.framework.GameIO;
 import spaceattack.framework.Scenario;
 import spaceattack.framework.Screen;
 import spaceattack.framework.ecs.EntitySystem;
+import spaceattack.main.components.BoundsCheck;
+import spaceattack.main.components.BoundsCheck.OutOfBounds;
 import spaceattack.main.components.Collision;
 import spaceattack.main.components.Draw;
 import spaceattack.main.components.PlayerShipInput;
 import spaceattack.main.components.Position;
-import spaceattack.main.components.Position.OOB;
 import spaceattack.main.components.TimedMove;
 import spaceattack.main.components.TimedShot;
 import spaceattack.main.systems.BoundsCheckSystem;
@@ -92,7 +93,7 @@ public final class Gameplay implements Scenario
     {
       long id = es.newEntity();
 
-      es.putComponent(id, new Position(i, s.getHeight() - 1, OOB.KEEP_BOUNDS));
+      es.putComponent(id, new Position(i, s.getHeight() - 1));
       es.putComponent(id, new Draw(TerminalColor.VIVID_CYAN, TerminalColor.DULL_BLACK, '~'));
       es.putComponent(id, new Collision(Collision.Type.EARTH_ORBIT));
     }
@@ -103,7 +104,8 @@ public final class Gameplay implements Scenario
     long id = es.newEntity();
     Screen s = io.mainScreen();
 
-    es.putComponent(id, new Position((s.getWidth() - GAME_START_X) / 2, s.getHeight() - 2, OOB.KEEP_BOUNDS));
+    es.putComponent(id, new Position((s.getWidth() - GAME_START_X) / 2, s.getHeight() - 2));
+    es.putComponent(id, BoundsCheck.fixedY(s.getHeight() - 2, GAME_START_X, s.getWidth() - 1, OutOfBounds.ADJUST_POSITION));
     es.putComponent(id, new Draw(TerminalColor.VIVID_WHITE, TerminalColor.DULL_BLACK, 'M'));
     es.putComponent(id, new PlayerShipInput());
     es.putComponent(id, new Collision(Collision.Type.PLAYER));
@@ -120,7 +122,7 @@ public final class Gameplay implements Scenario
       long id = es.newEntity();
       int fireRate = (r.nextInt(15) + 1) * 700;
 
-      es.putComponent(id, new Position(i, 0, OOB.KEEP_BOUNDS));
+      es.putComponent(id, new Position(i, 0));
       es.putComponent(id, new Draw(TerminalColor.VIVID_YELLOW, TerminalColor.DULL_BLACK, 'T'));
       es.putComponent(id, new TimedMove(0, 1, true, 4000));
       es.putComponent(id, new Collision(Collision.Type.ALIEN));

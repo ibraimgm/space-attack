@@ -3,12 +3,14 @@ package spaceattack.main.systems;
 import java.util.Map.Entry;
 
 import spaceattack.framework.GameIO;
+import spaceattack.framework.Screen;
 import spaceattack.framework.ecs.EntitySystem;
 import spaceattack.framework.ecs.System;
+import spaceattack.main.components.BoundsCheck;
+import spaceattack.main.components.BoundsCheck.OutOfBounds;
 import spaceattack.main.components.Collision;
 import spaceattack.main.components.Draw;
 import spaceattack.main.components.Position;
-import spaceattack.main.components.Position.OOB;
 import spaceattack.main.components.TimedMove;
 import spaceattack.main.components.TimedShot;
 
@@ -18,6 +20,8 @@ public final class TimedShotSystem implements System
   @Override
   public void execute(EntitySystem es, GameIO io, double delta)
   {
+    Screen s = io.mainScreen();
+
     for (Entry<Long, TimedShot> item : es.getAllComponents(TimedShot.class))
     {
       Long id = item.getKey();
@@ -34,7 +38,8 @@ public final class TimedShotSystem implements System
         es.requestChange(ess -> {
           long shotId = ess.newEntity();
 
-          ess.putComponent(shotId, new Position(p.x, p.y + 1, OOB.VANISH));
+          ess.putComponent(shotId, new Position(p.x, p.y + 1));
+          ess.putComponent(id, BoundsCheck.fromScreen(s, OutOfBounds.DESTROY_ENTITY));
           ess.putComponent(shotId, new Draw(ts.shotFg, ts.shotBg, ts.shotChar));
           ess.putComponent(shotId, new TimedMove(0, 1, true, ts.shotSpeed));
           ess.putComponent(shotId, new Collision(Collision.Type.ALIEN_SHOT));
