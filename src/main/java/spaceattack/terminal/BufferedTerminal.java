@@ -123,15 +123,30 @@ public final class BufferedTerminal implements Terminal
   @Override
   public void putc(char c)
   {
-    // convert the current coordinates to an array position
-    int i = currY * width + currX;
-    changed[i].bg = currBg;
-    changed[i].fg = currFg;
-    changed[i].c = c;
-    ++currX;
+    // ignore windows carriage-return
+    if (c == '\r')
+      return;
 
-    if (currX >= width)
+    if (c == '\n')
+    {
       ++currY;
+      currX = 0;
+    }
+    else
+    {
+      // convert the current coordinates to an array position
+      int i = currY * width + currX;
+      changed[i].bg = currBg;
+      changed[i].fg = currFg;
+      changed[i].c = c;
+      ++currX;
+
+      if (currX >= width)
+      {
+        ++currY;
+        currX = 0;
+      }
+    }
   }
 
   @Override
