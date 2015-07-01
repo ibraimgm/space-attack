@@ -24,6 +24,7 @@ import spaceattack.terminal.VKey;
 
 public final class Gameplay implements Scenario
 {
+  private static final int GAME_START_X = 26;
   private EntitySystem es = new EntitySystem();
 
   @Override
@@ -72,6 +73,7 @@ public final class Gameplay implements Scenario
   public void render(GameIO io, double delta)
   {
     io.mainScreen().clear(TerminalColor.DULL_BLACK);
+    drawUI(io);
     es.runRenderSystems(io, delta);
     io.mainScreen().blit();
   }
@@ -86,7 +88,7 @@ public final class Gameplay implements Scenario
   {
     Screen s = io.mainScreen();
 
-    for (int i = 0; i < s.getWidth(); ++i)
+    for (int i = GAME_START_X; i < s.getWidth(); ++i)
     {
       long id = es.newEntity();
 
@@ -101,7 +103,7 @@ public final class Gameplay implements Scenario
     long id = es.newEntity();
     Screen s = io.mainScreen();
 
-    es.putComponent(id, new Position(s.getWidth() / 2, s.getHeight() - 2, OOB.KEEP_BOUNDS));
+    es.putComponent(id, new Position((s.getWidth() - GAME_START_X) / 2, s.getHeight() - 2, OOB.KEEP_BOUNDS));
     es.putComponent(id, new Draw(TerminalColor.VIVID_WHITE, TerminalColor.DULL_BLACK, 'M'));
     es.putComponent(id, new PlayerShipInput());
     es.putComponent(id, new Collision(Collision.Type.PLAYER));
@@ -113,7 +115,7 @@ public final class Gameplay implements Scenario
     Random r = new Random();
 
     // the dreaded T's
-    for (int i = 0; i < s.getWidth(); i += 2)
+    for (int i = GAME_START_X; i < s.getWidth(); i += 2)
     {
       long id = es.newEntity();
       int fireRate = (r.nextInt(15) + 1) * 700;
@@ -126,4 +128,28 @@ public final class Gameplay implements Scenario
     }
   }
 
+  private void drawUI(GameIO io)
+  {
+    Screen s = io.mainScreen();
+
+    s.drawText(0, 0, "$W{+-----------------------+}%n");
+    s.drawText("$W{| Arrows = Move         |}%n");
+    s.drawText("$W{| Space  = Shoot        |}%n");
+    s.drawText("$W{+-----------------------+}%n");
+    s.drawText("$W{| Kill all the aliens   |}%n");
+    s.drawText("$W{| before they reach the |}%n");
+    s.drawText("$W{| planet's orbit!       |}%n");
+    s.drawText("$W{+-----------------------+}%n");
+    s.drawText("$W{| Aliens left           |}%n");
+    s.drawText("$W{|                       |}%n");
+    s.drawText("$W{| ?                     |}%n");
+    s.drawText("$W{| ?                     |}%n");
+    s.drawText("$W{| ?                     |}%n");
+    s.drawText("$W{| ?                     |}%n");
+    s.drawText("$W{+-----------------------+}%n");
+    s.drawText("$W{| Stage X               |}%n");
+    s.drawText("$W{| Score                 |}%n");
+    s.drawText("$W{| XXXX                  |}%n");
+    s.drawText("$W{+-----------------------+}");
+  }
 }

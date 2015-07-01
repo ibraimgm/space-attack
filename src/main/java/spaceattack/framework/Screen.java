@@ -13,5 +13,8 @@ public interface Screen
   void blit();
 
   void drawText(int x, int y, char c);
-  void drawText(int x, int y, String s);
+  void drawText(int x, int y, String format, Object... args);
+
+  void drawText(char c);
+  void drawText(String format, Object... args);
 }
