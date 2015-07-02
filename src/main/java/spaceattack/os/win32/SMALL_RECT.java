@@ -1,16 +1,16 @@
-package spaceattack.platform.win32;
+package spaceattack.os.win32;
 
 import java.util.Arrays;
 import java.util.List;
 
 import com.sun.jna.Structure;
 
-public class COORD extends Structure
+public class SMALL_RECT extends Structure
 {
-  public static class ByValue extends COORD implements Structure.ByValue {};
-
-  public short X;
-  public short Y;
+  public short Left;
+  public short Top;
+  public short Right;
+  public short Bottom;
 
   @SuppressWarnings("rawtypes")
   @Override
@@ -18,8 +18,10 @@ public class COORD extends Structure
   {
     return Arrays.asList(new String[]
         {
-          "X",
-          "Y"
+         "Left",
+         "Top",
+         "Right",
+         "Bottom"
         });
   }
 

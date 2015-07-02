@@ -6,7 +6,6 @@ import java.util.List;
 import spaceattack.framework.AbstractGameIO;
 import spaceattack.framework.Screen;
 import spaceattack.terminal.Terminal;
-import spaceattack.terminal.TerminalFactory;
 import spaceattack.terminal.VKey;
 
 public final class TerminalGameIO extends AbstractGameIO
@@ -36,12 +35,11 @@ public final class TerminalGameIO extends AbstractGameIO
   @Override
   public void fetchInputs()
   {
-    Terminal t = TerminalFactory.getInstance();
     VKey k;
 
     do
     {
-      k = t.readKey();
+      k = Terminal.INSTANCE.readKey();
 
       if (k != VKey.NONE)
         inputs.add(k);

@@ -2,7 +2,7 @@ package spaceattack.main;
 
 import spaceattack.framework.GameRunner;
 import spaceattack.framework.terminal.TerminalGameIO;
-import spaceattack.terminal.TerminalFactory;
+import spaceattack.terminal.Terminal;
 
 
 public class App
@@ -10,8 +10,8 @@ public class App
 
   public static void main(String[] args)
   {
-    TerminalFactory.getInstance().setup();
+    Terminal.INSTANCE.setup();
     new GameRunner().run(60, new TerminalGameIO(), new MainMenu());
-    TerminalFactory.getInstance().tearDown();
+    Terminal.INSTANCE.tearDown();
   }
 }

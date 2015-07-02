@@ -1,15 +1,16 @@
 package spaceattack.main.components;
 
 import spaceattack.framework.ecs.Component;
+import spaceattack.terminal.TerminalColor;
 
 public final class Draw implements Component
 {
-  public int fg;
-  public int bg;
+  public TerminalColor fg;
+  public TerminalColor bg;
   public char c;
   public boolean visible = true;
 
-  public Draw(int fg, int bg, char c)
+  public Draw(TerminalColor fg, TerminalColor bg, char c)
   {
     this.fg = fg;
     this.bg = bg;

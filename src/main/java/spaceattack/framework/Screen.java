@@ -1,5 +1,7 @@
 package spaceattack.framework;
 
+import spaceattack.terminal.TerminalColor;
+
 public interface Screen
 {
   int getX();
@@ -7,9 +9,9 @@ public interface Screen
   int getWidth();
   int getHeight();
 
-  void setBackground(int color);
-  void setForeground(int color);
-  void clear(int color);
+  void setBackground(TerminalColor color);
+  void setForeground(TerminalColor color);
+  void clear(TerminalColor color);
   void blit();
 
   void drawText(int x, int y, char c);

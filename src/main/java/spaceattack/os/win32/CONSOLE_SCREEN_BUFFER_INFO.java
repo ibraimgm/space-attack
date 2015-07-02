@@ -1,4 +1,4 @@
-package spaceattack.platform.win32;
+package spaceattack.os.win32;
 
 import java.util.Arrays;
 import java.util.List;

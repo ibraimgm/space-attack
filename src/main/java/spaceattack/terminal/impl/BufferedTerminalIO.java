@@ -1,15 +1,20 @@
-package spaceattack.terminal;
+package spaceattack.terminal.impl;
 
-public final class BufferedTerminal implements Terminal
+import spaceattack.terminal.TerminalColor;
+import spaceattack.terminal.TerminalIO;
+import spaceattack.terminal.VKey;
+
+public final class BufferedTerminalIO implements TerminalIO
 {
-  Terminal inner;
+  TerminalIO inner;
   int width, height;
-  int currX, currY, currBg, currFg;
+  int currX, currY;
+  TerminalColor currBg, currFg;
   BufferData[] current;
   BufferData[] changed;
 
 
-  public BufferedTerminal(Terminal inner, int width, int height, int initialBg, int initialFg)
+  public BufferedTerminalIO(TerminalIO inner, int width, int height, TerminalColor initialBg, TerminalColor initialFg)
   {
     this.inner = inner;
     this.width = width;
@@ -95,27 +100,27 @@ public final class BufferedTerminal implements Terminal
   }
 
   @Override
-  public void textBackground(int color)
+  public void textBackground(TerminalColor color)
   {
     if ((color != TerminalColor.COLOR_UNCHANGED) && (color != TerminalColor.NO_COLOR))
       this.currBg = color;
   }
 
   @Override
-  public void textForeground(int color)
+  public void textForeground(TerminalColor color)
   {
     if ((color != TerminalColor.COLOR_UNCHANGED) && (color != TerminalColor.NO_COLOR))
       this.currFg = color;
   }
 
   @Override
-  public int currentBackground()
+  public TerminalColor currentBackground()
   {
     return this.currBg;
   }
 
   @Override
-  public int currentForeground()
+  public TerminalColor currentForeground()
   {
     return this.currFg;
   }
@@ -163,11 +168,11 @@ public final class BufferedTerminal implements Terminal
 
   private class BufferData
   {
-    public int bg;
-    public int fg;
+    public TerminalColor bg;
+    public TerminalColor fg;
     public char c;
 
-    public BufferData(int bg, int fg)
+    public BufferData(TerminalColor bg, TerminalColor fg)
     {
       this.bg = bg;
       this.fg = fg;

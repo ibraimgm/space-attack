@@ -1,17 +1,17 @@
-package spaceattack.terminal.platform.win32;
+package spaceattack.terminal.impl;
 
-import spaceattack.platform.win32.CONSOLE_CURSOR_INFO;
-import spaceattack.platform.win32.CONSOLE_SCREEN_BUFFER_INFO;
-import spaceattack.platform.win32.COORD;
-import spaceattack.platform.win32.Kernel32;
-import spaceattack.platform.win32.Msvcrt;
-import spaceattack.terminal.Terminal;
+import spaceattack.os.win32.CONSOLE_CURSOR_INFO;
+import spaceattack.os.win32.CONSOLE_SCREEN_BUFFER_INFO;
+import spaceattack.os.win32.COORD;
+import spaceattack.os.win32.Kernel32;
+import spaceattack.os.win32.Msvcrt;
 import spaceattack.terminal.TerminalColor;
+import spaceattack.terminal.TerminalIO;
 import spaceattack.terminal.VKey;
 
 import com.sun.jna.ptr.IntByReference;
 
-public class WindowsTerminal implements Terminal
+public class WindowsTerminalIO implements TerminalIO
 {
   // constants from Wincon.h
   private static final short FOREGROUND_BLUE      = 1;
@@ -25,12 +25,12 @@ public class WindowsTerminal implements Terminal
 
   // managed state
   private int hConsole = -1;
-  private int currentFg = TerminalColor.DULL_WHITE;
-  private int currentBg = TerminalColor.DULL_BLACK;
+  private TerminalColor currentFg = TerminalColor.DULL_WHITE;
+  private TerminalColor currentBg = TerminalColor.DULL_BLACK;
   private CONSOLE_CURSOR_INFO cursorInfo;
   private CONSOLE_SCREEN_BUFFER_INFO info;
 
-  private short colorToWinColor(int color, boolean isForeground)
+  private short colorToWinColor(TerminalColor color, boolean isForeground)
   {
     short c;
 
@@ -38,23 +38,23 @@ public class WindowsTerminal implements Terminal
     {
       switch(color)
       {
-        case TerminalColor.DULL_BLACK:   c = 0; break;
-        case TerminalColor.DULL_RED:     c = FOREGROUND_RED; break;
-        case TerminalColor.DULL_GREEN:   c = FOREGROUND_GREEN; break;
-        case TerminalColor.DULL_YELLOW:  c = FOREGROUND_RED | FOREGROUND_GREEN; break;
-        case TerminalColor.DULL_BLUE:    c = FOREGROUND_BLUE; break;
-        case TerminalColor.DULL_MAGENTA: c = FOREGROUND_RED | FOREGROUND_BLUE; break;
-        case TerminalColor.DULL_CYAN:    c = FOREGROUND_GREEN | FOREGROUND_BLUE; break;
-        case TerminalColor.DULL_WHITE:   c = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
+        case DULL_BLACK:   c = 0; break;
+        case DULL_RED:     c = FOREGROUND_RED; break;
+        case DULL_GREEN:   c = FOREGROUND_GREEN; break;
+        case DULL_YELLOW:  c = FOREGROUND_RED | FOREGROUND_GREEN; break;
+        case DULL_BLUE:    c = FOREGROUND_BLUE; break;
+        case DULL_MAGENTA: c = FOREGROUND_RED | FOREGROUND_BLUE; break;
+        case DULL_CYAN:    c = FOREGROUND_GREEN | FOREGROUND_BLUE; break;
+        case DULL_WHITE:   c = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
 
-        case TerminalColor.VIVID_BLACK:   c = FOREGROUND_INTENSITY | 0; break;
-        case TerminalColor.VIVID_RED:     c = FOREGROUND_INTENSITY | FOREGROUND_RED; break;
-        case TerminalColor.VIVID_GREEN:   c = FOREGROUND_INTENSITY | FOREGROUND_GREEN; break;
-        case TerminalColor.VIVID_YELLOW:  c = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN; break;
-        case TerminalColor.VIVID_BLUE:    c = FOREGROUND_INTENSITY | FOREGROUND_BLUE; break;
-        case TerminalColor.VIVID_MAGENTA: c = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE; break;
-        case TerminalColor.VIVID_CYAN:    c = FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
-        case TerminalColor.VIVID_WHITE:   c = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
+        case VIVID_BLACK:   c = FOREGROUND_INTENSITY | 0; break;
+        case VIVID_RED:     c = FOREGROUND_INTENSITY | FOREGROUND_RED; break;
+        case VIVID_GREEN:   c = FOREGROUND_INTENSITY | FOREGROUND_GREEN; break;
+        case VIVID_YELLOW:  c = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN; break;
+        case VIVID_BLUE:    c = FOREGROUND_INTENSITY | FOREGROUND_BLUE; break;
+        case VIVID_MAGENTA: c = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_BLUE; break;
+        case VIVID_CYAN:    c = FOREGROUND_INTENSITY | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
+        case VIVID_WHITE:   c = FOREGROUND_INTENSITY | FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE; break;
 
         default: c = FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE;
       }
@@ -63,23 +63,23 @@ public class WindowsTerminal implements Terminal
     {
       switch(color)
       {
-        case TerminalColor.DULL_BLACK:   c = 0; break;
-        case TerminalColor.DULL_RED:     c = BACKGROUND_RED; break;
-        case TerminalColor.DULL_GREEN:   c = BACKGROUND_GREEN; break;
-        case TerminalColor.DULL_YELLOW:  c = BACKGROUND_RED | BACKGROUND_GREEN; break;
-        case TerminalColor.DULL_BLUE:    c = BACKGROUND_BLUE; break;
-        case TerminalColor.DULL_MAGENTA: c = BACKGROUND_RED | BACKGROUND_BLUE; break;
-        case TerminalColor.DULL_CYAN:    c = BACKGROUND_GREEN | BACKGROUND_BLUE; break;
-        case TerminalColor.DULL_WHITE:   c = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE; break;
+        case DULL_BLACK:   c = 0; break;
+        case DULL_RED:     c = BACKGROUND_RED; break;
+        case DULL_GREEN:   c = BACKGROUND_GREEN; break;
+        case DULL_YELLOW:  c = BACKGROUND_RED | BACKGROUND_GREEN; break;
+        case DULL_BLUE:    c = BACKGROUND_BLUE; break;
+        case DULL_MAGENTA: c = BACKGROUND_RED | BACKGROUND_BLUE; break;
+        case DULL_CYAN:    c = BACKGROUND_GREEN | BACKGROUND_BLUE; break;
+        case DULL_WHITE:   c = BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE; break;
 
-        case TerminalColor.VIVID_BLACK:   c = BACKGROUND_INTENSITY | 0; break;
-        case TerminalColor.VIVID_RED:     c = BACKGROUND_INTENSITY | BACKGROUND_RED; break;
-        case TerminalColor.VIVID_GREEN:   c = BACKGROUND_INTENSITY | BACKGROUND_GREEN; break;
-        case TerminalColor.VIVID_YELLOW:  c = BACKGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_GREEN; break;
-        case TerminalColor.VIVID_BLUE:    c = BACKGROUND_INTENSITY | BACKGROUND_BLUE; break;
-        case TerminalColor.VIVID_MAGENTA: c = BACKGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_BLUE; break;
-        case TerminalColor.VIVID_CYAN:    c = BACKGROUND_INTENSITY | BACKGROUND_GREEN | BACKGROUND_BLUE; break;
-        case TerminalColor.VIVID_WHITE:   c = BACKGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE; break;
+        case VIVID_BLACK:   c = BACKGROUND_INTENSITY | 0; break;
+        case VIVID_RED:     c = BACKGROUND_INTENSITY | BACKGROUND_RED; break;
+        case VIVID_GREEN:   c = BACKGROUND_INTENSITY | BACKGROUND_GREEN; break;
+        case VIVID_YELLOW:  c = BACKGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_GREEN; break;
+        case VIVID_BLUE:    c = BACKGROUND_INTENSITY | BACKGROUND_BLUE; break;
+        case VIVID_MAGENTA: c = BACKGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_BLUE; break;
+        case VIVID_CYAN:    c = BACKGROUND_INTENSITY | BACKGROUND_GREEN | BACKGROUND_BLUE; break;
+        case VIVID_WHITE:   c = BACKGROUND_INTENSITY | BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE; break;
 
         default: c = 0;
       }
@@ -165,7 +165,7 @@ public class WindowsTerminal implements Terminal
   }
 
   @Override
-  public void textBackground(int color)
+  public void textBackground(TerminalColor color)
   {
     if ((color == TerminalColor.COLOR_UNCHANGED) || (color == TerminalColor.NO_COLOR))
       return;
@@ -178,7 +178,7 @@ public class WindowsTerminal implements Terminal
   }
 
   @Override
-  public void textForeground(int color)
+  public void textForeground(TerminalColor color)
   {
     if ((color == TerminalColor.COLOR_UNCHANGED) || (color == TerminalColor.NO_COLOR))
       return;
@@ -191,13 +191,13 @@ public class WindowsTerminal implements Terminal
   }
 
   @Override
-  public int currentBackground()
+  public TerminalColor currentBackground()
   {
     return currentBg;
   }
 
   @Override
-  public int currentForeground()
+  public TerminalColor currentForeground()
   {
     return currentFg;
   }

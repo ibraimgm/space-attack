@@ -1,16 +1,17 @@
 package spaceattack.main.components;
 
 import spaceattack.framework.ecs.Component;
+import spaceattack.terminal.TerminalColor;
 
 public final class TimedShot extends AbstractTimedComponent implements
     Component
 {
   public double shotSpeed;
   public char shotChar;
-  public int shotBg;
-  public int shotFg;
+  public TerminalColor shotBg;
+  public TerminalColor shotFg;
 
-  public TimedShot(double shotSpeed, char shotChar, int shotBg, int shotFg, boolean repeatable, double ms)
+  public TimedShot(double shotSpeed, char shotChar, TerminalColor shotBg, TerminalColor shotFg, boolean repeatable, double ms)
   {
     super(repeatable, ms);
     this.shotSpeed = shotSpeed;

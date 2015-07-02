@@ -1,7 +1,8 @@
 package spaceattack.framework.terminal;
 
 import spaceattack.framework.Screen;
-import spaceattack.terminal.TerminalFactory;
+import spaceattack.terminal.Terminal;
+import spaceattack.terminal.TerminalColor;
 
 public final class TerminalScreen implements Screen
 {
@@ -43,54 +44,54 @@ public final class TerminalScreen implements Screen
   }
 
   @Override
-  public void setBackground(int color)
+  public void setBackground(TerminalColor color)
   {
-    TerminalFactory.getInstance().textBackground(color);
+    Terminal.INSTANCE.textBackground(color);
   }
 
   @Override
-  public void setForeground(int color)
+  public void setForeground(TerminalColor color)
   {
-    TerminalFactory.getInstance().textForeground(color);
+    Terminal.INSTANCE.textForeground(color);
   }
 
   @Override
-  public void clear(int color)
+  public void clear(TerminalColor color)
   {
     setBackground(color);
-    TerminalFactory.getInstance().clrscr();
+    Terminal.INSTANCE.clrscr();
   }
 
   @Override
   public void blit()
   {
-    TerminalFactory.getInstance().flush();
+    Terminal.INSTANCE.flush();
   }
 
   @Override
   public void drawText(int x, int y, char c)
   {
-    TerminalFactory.getInstance().gotoxy(this.x + x, this.y + y);
-    TerminalFactory.getInstance().putc(c);
+    Terminal.INSTANCE.gotoxy(this.x + x, this.y + y);
+    Terminal.INSTANCE.putc(c);
   }
 
   @Override
   public void drawText(int x, int y, String format, Object... args)
   {
-    TerminalFactory.getInstance().gotoxy(this.x + x, this.y + y);
-    TerminalFactory.getInstance().printc(format, args);
+    Terminal.INSTANCE.gotoxy(this.x + x, this.y + y);
+    Terminal.INSTANCE.printc(format, args);
   }
 
   @Override
   public void drawText(char c)
   {
-    TerminalFactory.getInstance().putc(c);
+    Terminal.INSTANCE.putc(c);
   }
 
   @Override
   public void drawText(String format, Object... args)
   {
-    TerminalFactory.getInstance().printc(format, args);
+    Terminal.INSTANCE.printc(format, args);
   }
 
 }

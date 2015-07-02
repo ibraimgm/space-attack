@@ -1,119 +1,30 @@
 package spaceattack.terminal;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
+import spaceattack.terminal.impl.BufferedTerminalIO;
+import spaceattack.terminal.impl.WindowsTerminalIO;
 
-public interface Terminal
+public final class Terminal
 {
-  void setup();
-  void tearDown();
-  void flush();
 
-  void clrscr();
-  void gotoxy(int x, int y);
-  void displayCursor(boolean visible);
-  void textBackground(int color);
-  void textForeground(int color);
-  int currentBackground();
-  int currentForeground();
-  void putc(char c);
-  boolean kbhit();
-  VKey readKey();
+  public static TerminalIO INSTANCE = get();
 
-  default void puts(String s)
+  private static TerminalIO get()
   {
-    for (char c : s.toCharArray())
-      putc(c);
+    TerminalIO inner;
+
+    String s = System.getProperty("os.name").toLowerCase();
+
+    if (s.indexOf("win") >= 0)
+      inner = new BufferedTerminalIO(new WindowsTerminalIO(), 80, 24, TerminalColor.VIVID_BLACK, TerminalColor.DULL_WHITE);
+    else if (s.indexOf("linux") >= 0)
+      inner = null;
+    else
+      inner = null;
+
+    if (inner == null)
+      throw new RuntimeException("Terminal not supported!");
+    else
+      return inner;
   }
 
-  default void printf(String format, Object... args)
-  {
-    String s = String.format(format, args);
-    puts(s);
-  }
-
-  default void printc(String format, Object... args)
-  {
-    char buffer[] = String.format(format, args).toCharArray();
-    Deque<ColorPair> stack = new ArrayDeque<Terminal.ColorPair>();
-
-    // parsing
-    for (int i = 0; i < buffer.length; ++i)
-    {
-      char c0 = buffer[i];
-      char c1 = (i + 1) >= buffer.length ? '\0' : buffer[i + 1];
-      char c2 = (i + 2) >= buffer.length ? '\0' : buffer[i + 2];
-      char c3 = (i + 3) >= buffer.length ? '\0' : buffer[i + 3];
-
-      // do we have a '$$' or '$}' ?
-      if ((c0 == '$') && ((c1 == '$') || (c1 == '}')))
-      {
-        putc(c1);
-        ++i;
-        continue;
-      }
-
-      // do we have a '}' and actual colors to pop?
-      if ((c0 == '}') && (!stack.isEmpty()))
-      {
-        ColorPair p = stack.removeFirst();
-        textForeground(p.fg);
-        textBackground(p.bg);
-        continue;
-      }
-
-      // do we have one color?
-      int fg = TerminalColor.charToColor(c1);
-
-      if ((c0 == '$') && (fg != TerminalColor.NO_COLOR) && (c2 == '{'))
-      {
-        fg = fg == TerminalColor.COLOR_UNCHANGED ? currentForeground() : fg;
-
-        stack.addFirst(new ColorPair(currentForeground(), currentBackground()));
-        textForeground(fg);
-
-        i+= 2;
-        continue;
-      }
-
-      // do we have TWO colors?
-      int bg = TerminalColor.charToColor(c2);
-
-      if ((c0 == '$') && (fg != TerminalColor.NO_COLOR) && (bg != TerminalColor.NO_COLOR) && (c3 == '{'))
-      {
-        fg = fg == TerminalColor.COLOR_UNCHANGED ? currentForeground() : fg;
-        bg = bg == TerminalColor.COLOR_UNCHANGED ? currentBackground() : bg;
-
-        stack.addFirst(new ColorPair(currentForeground(), currentBackground()));
-        textForeground(fg);
-        textBackground(bg);
-
-        i+= 3;
-        continue;
-      }
-
-      // since we can't determine what this is, it must be a normal char
-      putc(c0);
-    }
-
-    // now, if the user forgot to close the command, we try to pop everything
-    while (!stack.isEmpty())
-    {
-      ColorPair p = stack.removeFirst();
-      textForeground(p.fg);
-      textBackground(p.bg);
-    }
-  }
-
-  public static class ColorPair
-  {
-    public int fg;
-    public int bg;
-
-    public ColorPair(int fg, int bg)
-    {
-      this.fg = fg;
-      this.bg = bg;
-    }
-  }
 }

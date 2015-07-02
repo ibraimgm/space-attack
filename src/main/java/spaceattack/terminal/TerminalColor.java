@@ -1,44 +1,41 @@
 package spaceattack.terminal;
 
-public final class TerminalColor
+
+public enum TerminalColor
 {
- //colors based on ANSI standard
- private static final int INTENSITY_DULL  = 0;
- private static final int INTENSITY_VIVID = 60;
+  NO_COLOR(-2),
+  COLOR_UNCHANGED(-1),
+  DULL_BLACK(AnsiColors.DULL_BLACK),
+  DULL_RED(AnsiColors.DULL_RED),
+  DULL_GREEN(AnsiColors.DULL_GREEN),
+  DULL_YELLOW(AnsiColors.DULL_YELLOW),
+  DULL_BLUE(AnsiColors.DULL_BLUE),
+  DULL_MAGENTA(AnsiColors.DULL_MAGENTA),
+  DULL_CYAN(AnsiColors.DULL_CYAN),
+  DULL_WHITE(AnsiColors.DULL_WHITE),
+  VIVID_BLACK(AnsiColors.VIVID_BLACK),
+  VIVID_RED(AnsiColors.VIVID_RED),
+  VIVID_GREEN(AnsiColors.VIVID_GREEN),
+  VIVID_YELLOW(AnsiColors.VIVID_YELLOW),
+  VIVID_BLUE(AnsiColors.VIVID_BLUE),
+  VIVID_MAGENTA(AnsiColors.VIVID_MAGENTA),
+  VIVID_CYAN(AnsiColors.VIVID_CYAN),
+  VIVID_WHITE(AnsiColors.VIVID_WHITE);
 
- private static final int COLOR_BLACK   = 0;
- private static final int COLOR_RED     = 1;
- private static final int COLOR_GREEN   = 2;
- private static final int COLOR_YELLOW  = 3;
- private static final int COLOR_BLUE    = 4;
- private static final int COLOR_MAGENTA = 5;
- private static final int COLOR_CYAN    = 6;
- private static final int COLOR_WHITE   = 7;
+  private final int value;
 
- // colors usable by the user
- public static final int NO_COLOR            = -2;
- public static final int COLOR_UNCHANGED     = -1;
+  private TerminalColor(int value)
+  {
+    this.value = value;
+  }
 
- public static final int DULL_BLACK   = INTENSITY_DULL + COLOR_BLACK;
- public static final int DULL_RED     = INTENSITY_DULL + COLOR_RED;
- public static final int DULL_GREEN   = INTENSITY_DULL + COLOR_GREEN;
- public static final int DULL_YELLOW  = INTENSITY_DULL + COLOR_YELLOW;
- public static final int DULL_BLUE    = INTENSITY_DULL + COLOR_BLUE;
- public static final int DULL_MAGENTA = INTENSITY_DULL + COLOR_MAGENTA;
- public static final int DULL_CYAN    = INTENSITY_DULL + COLOR_CYAN;
- public static final int DULL_WHITE   = INTENSITY_DULL + COLOR_WHITE;
-
- public static final int VIVID_BLACK   = INTENSITY_VIVID + COLOR_BLACK;
- public static final int VIVID_RED     = INTENSITY_VIVID + COLOR_RED;
- public static final int VIVID_GREEN   = INTENSITY_VIVID + COLOR_GREEN;
- public static final int VIVID_YELLOW  = INTENSITY_VIVID + COLOR_YELLOW;
- public static final int VIVID_BLUE    = INTENSITY_VIVID + COLOR_BLUE;
- public static final int VIVID_MAGENTA = INTENSITY_VIVID + COLOR_MAGENTA;
- public static final int VIVID_CYAN    = INTENSITY_VIVID + COLOR_CYAN;
- public static final int VIVID_WHITE   = INTENSITY_VIVID + COLOR_WHITE;
+  public int getValue()
+  {
+    return value;
+  }
 
  // aux convert methods
- public static int charToColor(char c)
+ public static TerminalColor charToColor(char c)
  {
    switch(c)
    {

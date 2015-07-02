@@ -1,4 +1,4 @@
-package spaceattack.platform.win32;
+package spaceattack.os.win32;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
