@@ -29,6 +29,9 @@ public final class Gameplay implements Scenario
   private static final int GAME_START_X = 26;
   private EntitySystem es = new EntitySystem();
   private Category yellowAliens = new Category();
+  private Category greenAliens = new Category();
+  private Category cyanAliens = new Category();
+  private Category redAliens = new Category();
   int fps;
 
   @Override
@@ -125,18 +128,80 @@ public final class Gameplay implements Scenario
     Screen s = io.mainScreen();
     Random r = new Random();
 
-    // the dreaded T's
-    for (int i = GAME_START_X; i < s.getWidth(); i += 2)
+    boolean backRow = true;
+    boolean backType1 = true;
+    boolean frontType1 = true;
+
+    // the evil aliens
+    for (int i = GAME_START_X; i < s.getWidth(); i+=2)
     {
       long id = es.newEntity();
-      int fireRate = (r.nextInt(15) + 1) * 700;
+      int y;
+      TerminalColor color;
+      Category category;
+      char ship;
+      char shot;
+      int fireRate;
+      int shotSpeed;
 
-      es.putComponent(id, new Position(i, 0));
-      es.putComponent(id, new Draw(TerminalColor.VIVID_YELLOW, TerminalColor.DULL_BLACK, 'T'));
+      if (backRow)
+      {
+        y = 0;
+
+        if (backType1)
+        {
+          color = TerminalColor.VIVID_YELLOW;
+          ship = 'T';
+          shot = '.';
+          fireRate = (r.nextInt(15) + 1) * 700;
+          shotSpeed = 100;
+          category = yellowAliens;
+        }
+        else
+        {
+          color = TerminalColor.VIVID_GREEN;
+          ship = 'V';
+          shot = ':';
+          fireRate = (r.nextInt(15) + 1) * 850;
+          shotSpeed = 50;
+          category = greenAliens;
+        }
+
+        backType1 = !backType1;
+      }
+      else
+      {
+        y = 1;
+
+        if (frontType1)
+        {
+          color = TerminalColor.VIVID_CYAN;
+          ship = 'H';
+          shot = 'v';
+          fireRate = (r.nextInt(15) + 1) * 900;
+          shotSpeed = 200;
+          category = cyanAliens;
+        }
+        else
+        {
+          color = TerminalColor.VIVID_RED;
+          ship = 'Y';
+          shot = '!';
+          fireRate = (r.nextInt(15) + 1) * 800;
+          shotSpeed = 100;
+          category = redAliens;
+        }
+
+        frontType1 = !frontType1;
+      }
+      backRow = !backRow;
+
+      es.putComponent(id, new Position(i, y));
+      es.putComponent(id, new Draw(color, TerminalColor.DULL_BLACK, ship));
       es.putComponent(id, new TimedMove(0, 1, true, 4000));
       es.putComponent(id, new Collision(Collision.Type.ALIEN));
-      es.putComponent(id, new TimedShot(100, '.', TerminalColor.DULL_BLACK, TerminalColor.VIVID_YELLOW, true, fireRate));
-      es.putComponent(id, yellowAliens);
+      es.putComponent(id, new TimedShot(shotSpeed, shot, TerminalColor.DULL_BLACK, color, true, fireRate));
+      es.putComponent(id, category);
     }
   }
 
@@ -155,9 +220,9 @@ public final class Gameplay implements Scenario
     s.drawText("$W{| Aliens left           |}%n");
     s.drawText("$W{|                       |}%n");
     s.drawText("$W{| %21d |}%n", yellowAliens.size());
-    s.drawText("$W{| %21d |}%n", -1);
-    s.drawText("$W{| %21d |}%n", -1);
-    s.drawText("$W{| %21d |}%n", -1);
+    s.drawText("$W{| %21d |}%n", greenAliens.size());
+    s.drawText("$W{| %21d |}%n", cyanAliens.size());
+    s.drawText("$W{| %21d |}%n", redAliens.size());
     s.drawText("$W{+-----------------------+}%n");
     s.drawText("$W{| Stage X               |}%n");
     s.drawText("$W{| Score                 |}%n");
