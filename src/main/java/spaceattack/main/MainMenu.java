@@ -50,4 +50,10 @@ public final class MainMenu implements Scenario
     return new Gameplay();
   }
 
+  @Override
+  public void fps(GameIO io, int fps)
+  {
+    // Nothing to do here
+  }
+
 }

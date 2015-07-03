@@ -8,4 +8,5 @@ public interface Scenario
   void update(GameIO io, double delta);
   void render(GameIO io, double delta);
   Scenario quit(GameIO io);
+  void fps(GameIO io, int fps);
 }

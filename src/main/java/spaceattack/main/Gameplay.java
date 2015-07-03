@@ -29,6 +29,7 @@ public final class Gameplay implements Scenario
   private static final int GAME_START_X = 26;
   private EntitySystem es = new EntitySystem();
   private Category yellowAliens = new Category();
+  int fps;
 
   @Override
   public void init(GameIO io)
@@ -85,6 +86,12 @@ public final class Gameplay implements Scenario
   public Scenario quit(GameIO io)
   {
     return null;
+  }
+
+  @Override
+  public void fps(GameIO io, int fps)
+  {
+    this.fps = fps;
   }
 
   private void createEarth(GameIO io)
@@ -156,5 +163,6 @@ public final class Gameplay implements Scenario
     s.drawText("$W{| Score                 |}%n");
     s.drawText("$W{| XXXX                  |}%n");
     s.drawText("$W{+-----------------------+}");
+    s.drawText("%n%d", fps);
   }
 }

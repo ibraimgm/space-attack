@@ -55,6 +55,8 @@ public class GameRunner
     double previous = getCurrentTime();
     double lag = 0.0;
     double ms = 1000.0 / desiredFps;
+    int frames = 0;
+    double seconds = 1000.0;
 
     scenario.init(io);
 
@@ -66,6 +68,7 @@ public class GameRunner
       previous = current;
       lag += elapsed;
 
+      seconds -= elapsed;
       io.fetchInputs();
 
       while ((lag >= ms) && (scenario != null))
@@ -73,6 +76,14 @@ public class GameRunner
         scenario.update(io, ms);
         lag -= ms;
         scenario = processEvents(io, scenario);
+        ++frames;
+      }
+
+      if ((seconds <= 0) && (scenario != null))
+      {
+        scenario.fps(io, frames);
+        seconds += 1000.0;
+        frames = 0;
       }
 
       if (scenario != null)
