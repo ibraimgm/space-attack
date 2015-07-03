@@ -5,6 +5,7 @@ import java.util.Random;
 import spaceattack.framework.GameIO;
 import spaceattack.framework.Scenario;
 import spaceattack.framework.Screen;
+import spaceattack.framework.ecs.Category;
 import spaceattack.framework.ecs.EntitySystem;
 import spaceattack.main.components.BoundsCheck;
 import spaceattack.main.components.BoundsCheck.OutOfBounds;
@@ -27,6 +28,7 @@ public final class Gameplay implements Scenario
 {
   private static final int GAME_START_X = 26;
   private EntitySystem es = new EntitySystem();
+  private Category yellowAliens = new Category();
 
   @Override
   public void init(GameIO io)
@@ -127,6 +129,7 @@ public final class Gameplay implements Scenario
       es.putComponent(id, new TimedMove(0, 1, true, 4000));
       es.putComponent(id, new Collision(Collision.Type.ALIEN));
       es.putComponent(id, new TimedShot(100, '.', TerminalColor.DULL_BLACK, TerminalColor.VIVID_YELLOW, true, fireRate));
+      es.putComponent(id, yellowAliens);
     }
   }
 
@@ -144,10 +147,10 @@ public final class Gameplay implements Scenario
     s.drawText("$W{+-----------------------+}%n");
     s.drawText("$W{| Aliens left           |}%n");
     s.drawText("$W{|                       |}%n");
-    s.drawText("$W{| ?                     |}%n");
-    s.drawText("$W{| ?                     |}%n");
-    s.drawText("$W{| ?                     |}%n");
-    s.drawText("$W{| ?                     |}%n");
+    s.drawText("$W{| %21d |}%n", yellowAliens.size());
+    s.drawText("$W{| %21d |}%n", -1);
+    s.drawText("$W{| %21d |}%n", -1);
+    s.drawText("$W{| %21d |}%n", -1);
     s.drawText("$W{+-----------------------+}%n");
     s.drawText("$W{| Stage X               |}%n");
     s.drawText("$W{| Score                 |}%n");

@@ -61,20 +61,31 @@ public final class EntitySystem
     }
 
     ((HashMap<Long, T>) comps).put(e, component);
+
+    if (Category.class.isInstance(component))
+    {
+      Category cat = (Category) component;
+      cat.add(e);
+    }
   }
 
   public void removeEntity(Long e)
   {
     for (Class<? extends Component> c : componentStore.keySet())
-    {
-      HashMap<Long, ? extends Component> comps = componentStore.get(c);
-      comps.remove(e);
-    }
+      removeComponent(e, c);
   }
 
   public <T extends Component> void removeComponent(Long e, Class<T> componentClass)
   {
     HashMap<Long, ? extends Component> comps = componentStore.get(componentClass);
+
+    if (componentClass == Category.class)
+    {
+      Category cat = (Category) comps.get(e);
+
+      if (cat != null)
+        cat.remove(e);
+    }
 
     if (comps != null)
       comps.remove(e);
