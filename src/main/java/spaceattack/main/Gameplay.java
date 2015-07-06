@@ -1,7 +1,5 @@
 package spaceattack.main;
 
-import java.util.Random;
-
 import spaceattack.framework.GameIO;
 import spaceattack.framework.Scenario;
 import spaceattack.framework.Screen;
@@ -13,8 +11,6 @@ import spaceattack.main.components.Collision;
 import spaceattack.main.components.Draw;
 import spaceattack.main.components.PlayerShipInput;
 import spaceattack.main.components.Position;
-import spaceattack.main.components.TimedMove;
-import spaceattack.main.components.TimedShot;
 import spaceattack.main.systems.BoundsCheckSystem;
 import spaceattack.main.systems.CollisionSystem;
 import spaceattack.main.systems.DrawSystem;
@@ -126,7 +122,6 @@ public final class Gameplay implements Scenario
   private void createAliens(GameIO io)
   {
     Screen s = io.mainScreen();
-    Random r = new Random();
 
     boolean backRow = true;
     boolean backType1 = true;
@@ -135,73 +130,45 @@ public final class Gameplay implements Scenario
     // the evil aliens
     for (int i = GAME_START_X; i < s.getWidth(); i+=2)
     {
-      long id = es.newEntity();
-      int y;
-      TerminalColor color;
+      long id;// = es.newEntity();
       Category category;
-      char ship;
-      char shot;
-      int fireRate;
-      int shotSpeed;
 
-      if (backRow)
+      // choose the position
+      int y = backRow ? 0 : 1;
+
+      // choose what alien/category must be generated
+      if ((backRow) && (backType1))
       {
-        y = 0;
-
-        if (backType1)
-        {
-          color = TerminalColor.VIVID_YELLOW;
-          ship = 'T';
-          shot = '.';
-          fireRate = (r.nextInt(15) + 1) * 700;
-          shotSpeed = 100;
-          category = yellowAliens;
-        }
-        else
-        {
-          color = TerminalColor.VIVID_GREEN;
-          ship = 'V';
-          shot = ':';
-          fireRate = (r.nextInt(15) + 1) * 850;
-          shotSpeed = 50;
-          category = greenAliens;
-        }
-
-        backType1 = !backType1;
+        id = EntityFactory.makeYellowAlien(es, i, y, 4000);
+        category = yellowAliens;
+      }
+      else if (backRow)
+      {
+        id = EntityFactory.makeGreenAlien(es, i, y, 4000);
+        category = greenAliens;
+      }
+      else if (frontType1)
+      {
+        id = EntityFactory.makeCyanAlien(es, i, y, 4000);
+        category = cyanAliens;
       }
       else
       {
-        y = 1;
+        id = EntityFactory.makeRedAlien(es, i, y, 4000);
+        category = redAliens;
+      };
 
-        if (frontType1)
-        {
-          color = TerminalColor.VIVID_CYAN;
-          ship = 'H';
-          shot = 'v';
-          fireRate = (r.nextInt(15) + 1) * 900;
-          shotSpeed = 200;
-          category = cyanAliens;
-        }
-        else
-        {
-          color = TerminalColor.VIVID_RED;
-          ship = 'Y';
-          shot = '!';
-          fireRate = (r.nextInt(15) + 1) * 800;
-          shotSpeed = 100;
-          category = redAliens;
-        }
-
-        frontType1 = !frontType1;
-      }
-      backRow = !backRow;
-
-      es.putComponent(id, new Position(i, y));
-      es.putComponent(id, new Draw(color, TerminalColor.DULL_BLACK, ship));
-      es.putComponent(id, new TimedMove(0, 1, true, 4000));
-      es.putComponent(id, new Collision(Collision.Type.ALIEN));
-      es.putComponent(id, new TimedShot(shotSpeed, shot, TerminalColor.DULL_BLACK, color, true, fireRate));
+      // add to the category
       es.putComponent(id, category);
+
+      // switch the next alien type
+      if (backRow)
+        backType1 = !backType1;
+      else
+        frontType1 = !frontType1;
+
+      // switch the next row
+      backRow = !backRow;
     }
   }
 
