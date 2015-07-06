@@ -47,7 +47,7 @@ public final class MainMenu implements Scenario
   @Override
   public Scenario quit(GameIO io)
   {
-    return new Gameplay();
+    return new Level1();
   }
 
   @Override

@@ -1,5 +1,8 @@
 package spaceattack.main;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import spaceattack.framework.GameIO;
 import spaceattack.framework.Scenario;
 import spaceattack.framework.Screen;
@@ -20,15 +23,15 @@ import spaceattack.main.systems.TimedShotSystem;
 import spaceattack.terminal.TerminalColor;
 import spaceattack.terminal.VKey;
 
-public final class Gameplay implements Scenario
+public abstract class AbstractLevel implements Scenario
 {
-  private static final int GAME_START_X = 26;
-  private EntitySystem es = new EntitySystem();
-  private Category yellowAliens = new Category();
-  private Category greenAliens = new Category();
-  private Category cyanAliens = new Category();
-  private Category redAliens = new Category();
-  int fps;
+  protected static final int GAME_START_X = 26;
+  protected EntitySystem es = new EntitySystem();
+  protected int fps;
+  protected List<Category> categories = new ArrayList<Category>();
+
+  protected abstract void createAliens(GameIO io);
+  protected abstract void createCategories();
 
   @Override
   public void init(GameIO io)
@@ -47,7 +50,14 @@ public final class Gameplay implements Scenario
     createPlayer(io);
 
     // the evil aliens
+    createCategories();
     createAliens(io);
+  }
+
+  @Override
+  public void fps(GameIO io, int fps)
+  {
+    this.fps = fps;
   }
 
   @Override
@@ -81,18 +91,6 @@ public final class Gameplay implements Scenario
     io.mainScreen().blit();
   }
 
-  @Override
-  public Scenario quit(GameIO io)
-  {
-    return null;
-  }
-
-  @Override
-  public void fps(GameIO io, int fps)
-  {
-    this.fps = fps;
-  }
-
   private void createEarth(GameIO io)
   {
     Screen s = io.mainScreen();
@@ -119,59 +117,6 @@ public final class Gameplay implements Scenario
     es.putComponent(id, new Collision(Collision.Type.PLAYER));
   }
 
-  private void createAliens(GameIO io)
-  {
-    Screen s = io.mainScreen();
-
-    boolean backRow = true;
-    boolean backType1 = true;
-    boolean frontType1 = true;
-
-    // the evil aliens
-    for (int i = GAME_START_X; i < s.getWidth(); i+=2)
-    {
-      long id;// = es.newEntity();
-      Category category;
-
-      // choose the position
-      int y = backRow ? 0 : 1;
-
-      // choose what alien/category must be generated
-      if ((backRow) && (backType1))
-      {
-        id = EntityFactory.makeYellowAlien(es, i, y, 4000);
-        category = yellowAliens;
-      }
-      else if (backRow)
-      {
-        id = EntityFactory.makeGreenAlien(es, i, y, 4000);
-        category = greenAliens;
-      }
-      else if (frontType1)
-      {
-        id = EntityFactory.makeCyanAlien(es, i, y, 4000);
-        category = cyanAliens;
-      }
-      else
-      {
-        id = EntityFactory.makeRedAlien(es, i, y, 4000);
-        category = redAliens;
-      };
-
-      // add to the category
-      es.putComponent(id, category);
-
-      // switch the next alien type
-      if (backRow)
-        backType1 = !backType1;
-      else
-        frontType1 = !frontType1;
-
-      // switch the next row
-      backRow = !backRow;
-    }
-  }
-
   private void drawUI(GameIO io)
   {
     Screen s = io.mainScreen();
@@ -186,15 +131,28 @@ public final class Gameplay implements Scenario
     s.drawText("$W{+-----------------------+}%n");
     s.drawText("$W{| Aliens left           |}%n");
     s.drawText("$W{|                       |}%n");
-    s.drawText("$W{| %21d |}%n", yellowAliens.size());
-    s.drawText("$W{| %21d |}%n", greenAliens.size());
-    s.drawText("$W{| %21d |}%n", cyanAliens.size());
-    s.drawText("$W{| %21d |}%n", redAliens.size());
+
+    int linesLeft = 7;
+
+    for (Category c : categories)
+    {
+      String name = c.getName().substring(0, Math.min(c.getName().length(), 13));
+      s.drawText("$W{| %-13s %7d |}%n", name, c.size());
+      --linesLeft;
+    }
+
     s.drawText("$W{+-----------------------+}%n");
-    s.drawText("$W{| Stage X               |}%n");
+    s.drawText("$W{| Cycle: X              |}%n");
+    s.drawText("$W{| Stage: X              |}%n");
     s.drawText("$W{| Score                 |}%n");
     s.drawText("$W{| XXXX                  |}%n");
+    s.drawText("$W{+-----------------------+}%n");
+
+    while (linesLeft > 0)
+    {
+      s.drawText("$W{|                       |}%n");
+      --linesLeft;
+    }
     s.drawText("$W{+-----------------------+}");
-    s.drawText("%n%d", fps);
   }
 }
