@@ -28,6 +28,7 @@ public abstract class AbstractLevel implements Scenario
   protected static final int GAME_START_X = 26;
   protected EntitySystem es = new EntitySystem();
   protected int fps;
+  protected boolean paused = false;
   protected List<Category> categories = new ArrayList<Category>();
 
   protected abstract void createAliens(GameIO io);
@@ -63,20 +64,46 @@ public abstract class AbstractLevel implements Scenario
   @Override
   public void pause(GameIO io)
   {
+    paused = true;
   }
 
   @Override
   public void resume(GameIO io)
   {
+    paused = false;
   }
 
   @Override
   public void update(GameIO io, double delta)
   {
+    VKey key = io.peekKey();
+
+    // allow to resume/quit game
+    if (paused)
+    {
+      switch (key)
+      {
+        case ENTER:
+          io.consumeKey();
+          io.requestResume();
+          break;
+
+        case ESC:
+          io.consumeKey();
+          io.requestQuit();
+          break;
+
+        default:
+          io.consumeKey();
+      }
+
+      return;
+    }
+
     if (io.peekKey() == VKey.ENTER)
     {
       io.consumeKey();
-      io.requestQuit();
+      io.requestPause();
     }
     else
       es.runLogicSystems(io, delta);
@@ -85,9 +112,18 @@ public abstract class AbstractLevel implements Scenario
   @Override
   public void render(GameIO io, double delta)
   {
+    // clear everything
     io.mainScreen().clear(TerminalColor.DULL_BLACK);
+
+    // draw the current state
     drawUI(io);
     es.runRenderSystems(io, delta);
+
+    // draw the pause overlay
+    if (paused)
+      drawPauseOverlay(io);
+
+    // update the screen
     io.mainScreen().blit();
   }
 
@@ -154,5 +190,40 @@ public abstract class AbstractLevel implements Scenario
       --linesLeft;
     }
     s.drawText("$W{+-----------------------+}");
+  }
+
+  private void drawPauseOverlay(GameIO io)
+  {
+    Screen s = io.mainScreen();
+    int y = (s.getHeight() / 2) - 2;
+
+    s.setBackground(TerminalColor.DULL_WHITE);
+    s.setForeground(TerminalColor.DULL_BLACK);
+
+    s.drawText(0, y + 0, fillOnCenter(s, ""));
+    s.drawText(0, y + 1, fillOnCenter(s, "PAUSED"));
+    s.drawText(0, y + 2, fillOnCenter(s, ""));
+    s.drawText(0, y + 3, fillOnCenter(s, "[ENTER] - Resume   [ESC] - Quit"));
+    s.drawText(0, y + 4, fillOnCenter(s, ""));
+  }
+
+  private String fillOnCenter(Screen screen, String s)
+  {
+    StringBuilder sb = new StringBuilder();
+    int size = screen.getWidth();
+
+    for (int i = 0; i < (size - s.length()) / 2; i++)
+    {
+      sb.append(" ");
+    }
+
+    sb.append(s);
+
+    while (sb.length() < size)
+    {
+      sb.append(" ");
+    }
+
+    return sb.toString();
   }
 }
