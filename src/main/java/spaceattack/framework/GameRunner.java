@@ -9,12 +9,14 @@ public class GameRunner
 
   public Scenario processEvents(GameIO io, Scenario scenario)
   {
-    int e = io.peekEvent();
     boolean handled = true;
     Scenario other = scenario;
 
     // handle every event that we can
     while (handled)
+    {
+      int e = io.peekEvent();
+
       switch (e)
       {
         case GEvents.EVT_PAUSE:
@@ -35,6 +37,7 @@ public class GameRunner
 
         default: handled = false;
       }
+    }
 
     // if the scenariop changes, drop every pending event
     if (other != scenario)
