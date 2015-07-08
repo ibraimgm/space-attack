@@ -7,11 +7,34 @@ import spaceattack.framework.ecs.Category;
 
 public final class Level5 extends AbstractLevel
 {
+  public Level5(GameState state)
+  {
+    super(state);
+  }
+
   private Category yellowAliens = new Category("Yellow Aliens");
   private Category greenAliens = new Category("Green Aliens");
   private Category cyanAliens = new Category("Cyan Aliens");
   private Category redAliens = new Category("Red Aliens");
   int fps;
+
+  @Override
+  protected String getLevelShortName()
+  {
+    return "Attack!";
+  }
+
+  @Override
+  protected String getLevelLongName()
+  {
+    return "Attack On Earth!";
+  }
+
+  @Override
+  protected int getLevelNumber()
+  {
+    return 5;
+  }
 
   @Override
   public Scenario quit(GameIO io)
@@ -49,22 +72,22 @@ public final class Level5 extends AbstractLevel
       // choose what alien/category must be generated
       if ((backRow) && (backType1))
       {
-        id = EntityFactory.makeYellowAlien(es, i, y, 4000);
+        id = EntityFactory.makeYellowAlien(es, i, y, state);
         category = yellowAliens;
       }
       else if (backRow)
       {
-        id = EntityFactory.makeGreenAlien(es, i, y, 4000);
+        id = EntityFactory.makeGreenAlien(es, i, y, state);
         category = greenAliens;
       }
       else if (frontType1)
       {
-        id = EntityFactory.makeCyanAlien(es, i, y, 4000);
+        id = EntityFactory.makeCyanAlien(es, i, y, state);
         category = cyanAliens;
       }
       else
       {
-        id = EntityFactory.makeRedAlien(es, i, y, 4000);
+        id = EntityFactory.makeRedAlien(es, i, y, state);
         category = redAliens;
       };
 
@@ -80,5 +103,11 @@ public final class Level5 extends AbstractLevel
       // switch the next row
       backRow = !backRow;
     }
+  }
+
+  @Override
+  protected int getAvailableScore()
+  {
+    throw new RuntimeException("Not implemented yet!");
   }
 }

@@ -25,14 +25,27 @@ import spaceattack.terminal.VKey;
 
 public abstract class AbstractLevel implements Scenario
 {
-  protected static final int GAME_START_X = 26;
+  private int maxScore;
+
+  protected static final int GAME_START_X = 27;
   protected EntitySystem es = new EntitySystem();
   protected int fps;
   protected boolean paused = false;
+  protected boolean levelStarting;
   protected List<Category> categories = new ArrayList<Category>();
+  protected GameState state = null;
 
+  protected abstract String getLevelShortName();
+  protected abstract String getLevelLongName();
+  protected abstract int getLevelNumber();
   protected abstract void createAliens(GameIO io);
   protected abstract void createCategories();
+  protected abstract int getAvailableScore();
+
+  protected AbstractLevel(GameState state)
+  {
+    this.state = state;
+  }
 
   @Override
   public void init(GameIO io)
@@ -41,7 +54,7 @@ public abstract class AbstractLevel implements Scenario
     es.addLogicSystem(new TimedMoveSystem());
     es.addLogicSystem(new TimedShotSystem());
     es.addLogicSystem(new BoundsCheckSystem());
-    es.addLogicSystem(new CollisionSystem());
+    es.addLogicSystem(new CollisionSystem(state));
     es.addRenderSystem(new DrawSystem());
 
     // the planet orbit, where the aliens cannot reach!
@@ -53,6 +66,12 @@ public abstract class AbstractLevel implements Scenario
     // the evil aliens
     createCategories();
     createAliens(io);
+
+    // setup this level score
+    maxScore = getAvailableScore();
+
+    // show the title
+    levelStarting = true;
   }
 
   @Override
@@ -78,6 +97,16 @@ public abstract class AbstractLevel implements Scenario
   {
     VKey key = io.peekKey();
 
+    // show the level title
+    if (levelStarting)
+    {
+      if (key == VKey.ENTER)
+        levelStarting = false;
+
+      io.consumeKey();
+      return;
+    }
+
     // allow to resume/quit game
     if (paused)
     {
@@ -100,13 +129,16 @@ public abstract class AbstractLevel implements Scenario
       return;
     }
 
+    // handles pausing
     if (io.peekKey() == VKey.ENTER)
     {
       io.consumeKey();
       io.requestPause();
+      return;
     }
-    else
-      es.runLogicSystems(io, delta);
+
+    // if we have come this far, update the game state
+    es.runLogicSystems(io, delta);
   }
 
   @Override
@@ -116,8 +148,13 @@ public abstract class AbstractLevel implements Scenario
     io.mainScreen().clear(TerminalColor.DULL_BLACK);
 
     // draw the current state
-    drawUI(io);
-    es.runRenderSystems(io, delta);
+    if (levelStarting)
+      drawTitleOverlay(io);
+    else
+    {
+      drawUI(io);
+      es.runRenderSystems(io, delta);
+    }
 
     // draw the pause overlay
     if (paused)
@@ -125,6 +162,11 @@ public abstract class AbstractLevel implements Scenario
 
     // update the screen
     io.mainScreen().blit();
+  }
+
+  protected int currentScore()
+  {
+    return maxScore - getAvailableScore();
   }
 
   private void createEarth(GameIO io)
@@ -157,39 +199,45 @@ public abstract class AbstractLevel implements Scenario
   {
     Screen s = io.mainScreen();
 
-    s.drawText(0, 0, "$W{+-----------------------+}%n");
-    s.drawText("$W{| Arrows = Move         |}%n");
-    s.drawText("$W{| Space  = Shoot        |}%n");
-    s.drawText("$W{+-----------------------+}%n");
-    s.drawText("$W{| Kill all the aliens   |}%n");
-    s.drawText("$W{| before they reach the |}%n");
-    s.drawText("$W{| planet's orbit!       |}%n");
-    s.drawText("$W{+-----------------------+}%n");
-    s.drawText("$W{| Aliens left           |}%n");
-    s.drawText("$W{|                       |}%n");
+    s.drawText(0, 0, "$W{+------------------------+}%n");
+    s.drawText("$W{| Arrows = Move          |}%n");
+    s.drawText("$W{| Space  = Shoot         |}%n");
+    s.drawText("$W{+------------------------+}%n");
+    s.drawText("$W{| Kill all the aliens    |}%n");
+    s.drawText("$W{| before they reach the  |}%n");
+    s.drawText("$W{| planet's orbit!        |}%n");
+    s.drawText("$W{+------------------------+}%n");
+    s.drawText("$W{| Aliens left            |}%n");
+    s.drawText("$W{|                        |}%n");
 
-    int linesLeft = 7;
+    int linesLeft = 4;
 
     for (Category c : categories)
     {
-      String name = c.getName().substring(0, Math.min(c.getName().length(), 13));
-      s.drawText("$W{| %-13s %7d |}%n", name, c.size());
+      String name = c.getName().substring(0, Math.min(c.getName().length(), 14));
+      s.drawText("$W{| %-14s %7d |}%n", name, c.size());
       --linesLeft;
     }
 
-    s.drawText("$W{+-----------------------+}%n");
-    s.drawText("$W{| Cycle: X              |}%n");
-    s.drawText("$W{| Stage: X              |}%n");
-    s.drawText("$W{| Score                 |}%n");
-    s.drawText("$W{| XXXX                  |}%n");
-    s.drawText("$W{+-----------------------+}%n");
+    String name = getLevelShortName();
+    name = name.substring(0, Math.min(14, name.length()));
+
+    s.drawText("$W{+------------------------+}%n");
+    s.drawText("$W{| Cycle: %-15s |}%n", state.getCycleDescription());
+    s.drawText("$W{| Stage: %-15s |}%n", name);
+    s.drawText("$W{| Level Score:           |}%n");
+    s.drawText("$W{| %22d |}%n", currentScore());
+    s.drawText("$W{| Total Score:           |}%n");
+    s.drawText("$W{| %22d |}%n", currentScore() + state.getTotalScore());
+    s.drawText("$W{+------------------------+}%n");
+    s.drawText("$W{| L %s |}%n", state.hpBarStr());
 
     while (linesLeft > 0)
     {
-      s.drawText("$W{|                       |}%n");
+      s.drawText("$W{|                        |}%n");
       --linesLeft;
     }
-    s.drawText("$W{+-----------------------+}");
+    s.drawText("$W{+------------------------+}");
   }
 
   private void drawPauseOverlay(GameIO io)
@@ -204,6 +252,21 @@ public abstract class AbstractLevel implements Scenario
     s.drawText(0, y + 1, fillOnCenter(s, "PAUSED"));
     s.drawText(0, y + 2, fillOnCenter(s, ""));
     s.drawText(0, y + 3, fillOnCenter(s, "[ENTER] - Resume   [ESC] - Quit"));
+    s.drawText(0, y + 4, fillOnCenter(s, ""));
+  }
+
+  private void drawTitleOverlay(GameIO io)
+  {
+    Screen s = io.mainScreen();
+    int y = (s.getHeight() / 2) - 2;
+
+    s.setBackground(TerminalColor.DULL_WHITE);
+    s.setForeground(TerminalColor.DULL_BLACK);
+
+    s.drawText(0, y + 0, fillOnCenter(s, ""));
+    s.drawText(0, y + 1, fillOnCenter(s, "LEVEL " + getLevelNumber()));
+    s.drawText(0, y + 2, fillOnCenter(s, ""));
+    s.drawText(0, y + 3, fillOnCenter(s, "~ " + getLevelLongName() + " ~"));
     s.drawText(0, y + 4, fillOnCenter(s, ""));
   }
 

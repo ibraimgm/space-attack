@@ -7,11 +7,18 @@ import java.util.Map.Entry;
 import spaceattack.framework.GameIO;
 import spaceattack.framework.ecs.EntitySystem;
 import spaceattack.framework.ecs.System;
+import spaceattack.main.GameState;
 import spaceattack.main.components.Collision;
 import spaceattack.main.components.Position;
 
 public final class CollisionSystem implements System
 {
+  private GameState state;
+
+  public CollisionSystem(GameState state)
+  {
+    this.state = state;
+  }
 
   @Override
   public void execute(EntitySystem es, GameIO io, double delta)
@@ -67,6 +74,21 @@ public final class CollisionSystem implements System
         if (checkTypes(a, b, Collision.Type.ALIEN, Collision.Type.EARTH_ORBIT))
         {
           io.requestQuit();
+          state.takeDamage(99);
+        }
+
+        // if an alien shot collides with the player, register damage
+        if (checkTypes(a, b, Collision.Type.ALIEN_SHOT, Collision.Type.PLAYER))
+        {
+          state.takeDamage(1);
+          es.requestRemove(a.collision.type == Collision.Type.ALIEN_SHOT ? a.id : b.id);
+        }
+
+        // if an alien collides with the player, it's game over
+        if (checkTypes(a, b, Collision.Type.ALIEN, Collision.Type.PLAYER))
+        {
+          io.requestQuit();
+          state.takeDamage(99);
         }
       }
   }
