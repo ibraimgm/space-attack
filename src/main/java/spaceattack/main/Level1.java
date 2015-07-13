@@ -34,7 +34,9 @@ public final class Level1 extends AbstractLevel
   @Override
   public Scenario quit(GameIO io)
   {
-    return null;
+    Scenario other = super.quit(io);
+
+    return other != null ? other : new Level2(state);
   }
 
   @Override

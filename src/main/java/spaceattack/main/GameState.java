@@ -106,6 +106,11 @@ public final class GameState
     winState = WinState.GAME_LOST;
   }
 
+  public void startPlaying()
+  {
+    winState = WinState.UNDECIDED;
+  }
+
   public enum WinState
   {
     GAME_WON,

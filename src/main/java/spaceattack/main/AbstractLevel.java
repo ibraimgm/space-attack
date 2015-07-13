@@ -72,6 +72,9 @@ public abstract class AbstractLevel implements Scenario
 
     // show the title
     levelStarting = true;
+
+    // reset the state
+    state.startPlaying();
   }
 
   @Override
