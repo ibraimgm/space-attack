@@ -7,12 +7,14 @@ public final class GameState
   private int totalScore;
   private int cycle;
   private int hp;
+  private WinState winState;
 
   public GameState()
   {
     totalScore = 0;
     cycle = 0;
     hp = MAX_HP;
+    winState = WinState.UNDECIDED;
   }
 
   public int getTotalScore()
@@ -28,6 +30,9 @@ public final class GameState
   public void takeDamage(int damage)
   {
     hp = damage > hp ? 0 : hp - damage;
+
+    if (hp == 0)
+      lose();
   }
 
   public String hpBarStr()
@@ -74,5 +79,37 @@ public final class GameState
   public void nextCycle()
   {
     ++cycle;
+  }
+
+  public boolean isGameWon()
+  {
+    return winState == WinState.GAME_WON;
+  }
+
+  public boolean isGameLost()
+  {
+    return winState == WinState.GAME_LOST;
+  }
+
+  public boolean isPlaying()
+  {
+    return winState == WinState.UNDECIDED;
+  }
+
+  public void win()
+  {
+    winState = WinState.GAME_WON;
+  }
+
+  public void lose()
+  {
+    winState = WinState.GAME_LOST;
+  }
+
+  public enum WinState
+  {
+    GAME_WON,
+    GAME_LOST,
+    UNDECIDED
   }
 }

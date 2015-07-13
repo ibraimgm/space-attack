@@ -93,6 +93,15 @@ public abstract class AbstractLevel implements Scenario
   }
 
   @Override
+  public Scenario quit(GameIO io)
+  {
+    state.addScore(currentScore());
+
+    // back to the menu if we lose
+    return state.isGameLost() ? new MainMenu() : null;
+  }
+
+  @Override
   public void update(GameIO io, double delta)
   {
     VKey key = io.peekKey();
@@ -102,6 +111,16 @@ public abstract class AbstractLevel implements Scenario
     {
       if (key == VKey.ENTER)
         levelStarting = false;
+
+      io.consumeKey();
+      return;
+    }
+
+    // if the game is already over wait for input to proceed
+    if (!state.isPlaying())
+    {
+      if (key == VKey.ENTER)
+        io.requestQuit();
 
       io.consumeKey();
       return;
@@ -137,8 +156,29 @@ public abstract class AbstractLevel implements Scenario
       return;
     }
 
+    // magic key to automatically win
+    if (io.peekKey() == VKey.UP_ARROW)
+    {
+      io.consumeKey();
+      state.win();
+      return;
+    }
+
     // if we have come this far, update the game state
     es.runLogicSystems(io, delta);
+
+    // check winning condition
+    // losing condition is already checkd when the player takes damage
+    if (state.isPlaying())
+    {
+      boolean aliensDead = true;
+
+      for (Category c : categories)
+        aliensDead = aliensDead && (c.size() == 0);
+
+      if (aliensDead)
+        state.win();
+    }
   }
 
   @Override
@@ -159,6 +199,14 @@ public abstract class AbstractLevel implements Scenario
     // draw the pause overlay
     if (paused)
       drawPauseOverlay(io);
+
+    // draw the win overlay
+    if (state.isGameWon())
+      drawWinOverlay(io);
+
+    // draw the lose overlay
+    if (state.isGameLost())
+      drawLoseOverlay(io);
 
     // update the screen
     io.mainScreen().blit();
@@ -267,6 +315,36 @@ public abstract class AbstractLevel implements Scenario
     s.drawText(0, y + 1, fillOnCenter(s, "LEVEL " + getLevelNumber()));
     s.drawText(0, y + 2, fillOnCenter(s, ""));
     s.drawText(0, y + 3, fillOnCenter(s, "~ " + getLevelLongName() + " ~"));
+    s.drawText(0, y + 4, fillOnCenter(s, ""));
+  }
+
+  private void drawWinOverlay(GameIO io)
+  {
+    Screen s = io.mainScreen();
+    int y = (s.getHeight() / 2) - 2;
+
+    s.setBackground(TerminalColor.DULL_YELLOW);
+    s.setForeground(TerminalColor.DULL_BLACK);
+
+    s.drawText(0, y + 0, fillOnCenter(s, ""));
+    s.drawText(0, y + 1, fillOnCenter(s, "LEVEL " + getLevelNumber() + " CLEARED!"));
+    s.drawText(0, y + 2, fillOnCenter(s, ""));
+    s.drawText(0, y + 3, fillOnCenter(s, "!!! CONGRATULATIONS !!!"));
+    s.drawText(0, y + 4, fillOnCenter(s, ""));
+  }
+
+  private void drawLoseOverlay(GameIO io)
+  {
+    Screen s = io.mainScreen();
+    int y = (s.getHeight() / 2) - 2;
+
+    s.setBackground(TerminalColor.DULL_RED);
+    s.setForeground(TerminalColor.DULL_BLACK);
+
+    s.drawText(0, y + 0, fillOnCenter(s, ""));
+    s.drawText(0, y + 1, fillOnCenter(s, "LEVEL " + getLevelNumber() + " FAILED!"));
+    s.drawText(0, y + 2, fillOnCenter(s, ""));
+    s.drawText(0, y + 3, fillOnCenter(s, "--- YOU DIED ---"));
     s.drawText(0, y + 4, fillOnCenter(s, ""));
   }
 
