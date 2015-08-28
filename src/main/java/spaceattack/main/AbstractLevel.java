@@ -2,7 +2,6 @@ package spaceattack.main;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import spaceattack.framework.GameIO;
 import spaceattack.framework.Scenario;
 import spaceattack.framework.Screen;
@@ -141,6 +140,7 @@ public abstract class AbstractLevel implements Scenario
 
         case ESC:
           io.consumeKey();
+          state.lose();
           io.requestQuit();
           break;
 
