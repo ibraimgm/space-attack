@@ -3,7 +3,6 @@ package spaceattack.main.systems;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
-
 import spaceattack.framework.GameIO;
 import spaceattack.framework.ecs.EntitySystem;
 import spaceattack.framework.ecs.System;
@@ -73,7 +72,6 @@ public final class CollisionSystem implements System
         // if an alien reaches earth, it's game over
         if (checkTypes(a, b, Collision.Type.ALIEN, Collision.Type.EARTH_ORBIT))
         {
-          io.requestQuit();
           state.takeDamage(99);
         }
 
@@ -87,7 +85,6 @@ public final class CollisionSystem implements System
         // if an alien collides with the player, it's game over
         if (checkTypes(a, b, Collision.Type.ALIEN, Collision.Type.PLAYER))
         {
-          io.requestQuit();
           state.takeDamage(99);
         }
       }
