@@ -16,7 +16,6 @@ public final class Level5 extends AbstractLevel
   private Category greenAliens = new Category("Green Aliens");
   private Category cyanAliens = new Category("Cyan Aliens");
   private Category redAliens = new Category("Red Aliens");
-  int fps;
 
   @Override
   protected String getLevelShortName()
@@ -108,6 +107,9 @@ public final class Level5 extends AbstractLevel
   @Override
   protected int getAvailableScore()
   {
-    throw new RuntimeException("Not implemented yet!");
+    return (yellowAliens.size() * 10) +
+        (greenAliens.size() * 15) +
+        (cyanAliens.size() * 15) +
+        (redAliens.size() * 20);
   }
 }

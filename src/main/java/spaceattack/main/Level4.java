@@ -5,10 +5,10 @@ import spaceattack.framework.Scenario;
 import spaceattack.framework.Screen;
 import spaceattack.framework.ecs.Category;
 
-public class Level3 extends AbstractLevel
+public class Level4 extends AbstractLevel
 {
 
-  protected Level3(GameState state)
+  protected Level4(GameState state)
   {
     super(state);
   }
@@ -16,19 +16,19 @@ public class Level3 extends AbstractLevel
   @Override
   protected String getLevelShortName()
   {
-    return "Swarm";
+    return "Furious";
   }
 
   @Override
   protected String getLevelLongName()
   {
-    return "Slow Swarm";
+    return "Furious March";
   }
 
   @Override
   protected int getLevelNumber()
   {
-    return 3;
+    return 4;
   }
 
   @Override
@@ -37,30 +37,25 @@ public class Level3 extends AbstractLevel
     Screen s = io.mainScreen();
     Category cat = categories.get(0);
 
-    for (int y = 0; y < 2; ++y)
-      for (int x = GAME_START_X; x < s.getWidth(); ++x)
-      {
-        int n = x - GAME_START_X;
-        n %= (y == 0) ? 5 : 4;
+    for (int x = GAME_START_X; x < s.getWidth(); ++x)
+    {
+      int y = x % 2 == 0 ? 0 : 1;
 
-        if (n > 1)
-        {
-          long id = EntityFactory.makeCyanAlien(es, x, y, state);
-          es.putComponent(id, cat);
-        }
-      }
+      long id = EntityFactory.makeRedAlien(es, x, y, state);
+      es.putComponent(id, cat);
+    }
   }
 
   @Override
   protected void createCategories()
   {
-    categories.add(new Category("Cyan Aliens"));
+    categories.add(new Category("Red Aliens"));
   }
 
   @Override
   protected int getAvailableScore()
   {
-    return categories.get(0).size() * 15;
+    return categories.get(0).size() * 20;
   }
 
   @Override
@@ -68,6 +63,6 @@ public class Level3 extends AbstractLevel
   {
     Scenario other = super.quit(io);
 
-    return other != null ? other : new Level4(state);
+    return other != null ? other : new Level5(state);
   }
 }
