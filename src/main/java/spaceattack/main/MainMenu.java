@@ -95,6 +95,7 @@ public final class MainMenu implements Scenario
   private void renderMenuItem(GameIO io, int item, String text)
   {
     Screen s = io.mainScreen();
+    s.setForeground(TerminalColor.DULL_WHITE);
 
     if (item == option)
       s.drawText(MENU_INDICATOR_X, MENU_AXIS_Y + item, '*');
