@@ -1,7 +1,6 @@
 package spaceattack.main;
 
 import java.util.Random;
-
 import spaceattack.framework.ecs.EntitySystem;
 import spaceattack.main.components.Collision;
 import spaceattack.main.components.Draw;
@@ -19,6 +18,58 @@ public final class EntityFactory
   {
   }
 
+  public static long makeYellowAlien(EntitySystem es, int x, int y, GameState state)
+  {
+    long id = es.newEntity();
+    int fireRate = randomizeSpeed((r.nextInt(15) + 1) * 700);
+    es.putComponent(id, new Position(x, y));
+    es.putComponent(id, new Draw(TerminalColor.VIVID_YELLOW, TerminalColor.DULL_BLACK, 'T'));
+    es.putComponent(id, new TimedMove(0, 1, true, getMoveDelay(state)));
+    es.putComponent(id, new Collision(Collision.Type.ALIEN));
+    es.putComponent(id, new TimedShot(100, '.', TerminalColor.DULL_BLACK, TerminalColor.VIVID_YELLOW, true, fireRate));
+
+    return id;
+  }
+
+  public static long makeGreenAlien(EntitySystem es, int x, int y, GameState state)
+  {
+    long id = es.newEntity();
+    int fireRate = randomizeSpeed((r.nextInt(15) + 1) * 850);
+    es.putComponent(id, new Position(x, y));
+    es.putComponent(id, new Draw(TerminalColor.VIVID_GREEN, TerminalColor.DULL_BLACK, 'V'));
+    es.putComponent(id, new TimedMove(0, 1, true, getMoveDelay(state)));
+    es.putComponent(id, new Collision(Collision.Type.ALIEN));
+    es.putComponent(id, new TimedShot(50, ':', TerminalColor.DULL_BLACK, TerminalColor.VIVID_GREEN, true, fireRate));
+
+    return id;
+  }
+
+  public static long makeCyanAlien(EntitySystem es, int x, int y, GameState state)
+  {
+    long id = es.newEntity();
+    int fireRate = randomizeSpeed((r.nextInt(15) + 1) * 900);
+    es.putComponent(id, new Position(x, y));
+    es.putComponent(id, new Draw(TerminalColor.VIVID_CYAN, TerminalColor.DULL_BLACK, 'H'));
+    es.putComponent(id, new TimedMove(0, 1, true, getMoveDelay(state)));
+    es.putComponent(id, new Collision(Collision.Type.ALIEN));
+    es.putComponent(id, new TimedShot(150, 'v', TerminalColor.DULL_BLACK, TerminalColor.VIVID_CYAN, true, fireRate));
+
+    return id;
+  }
+
+  public static long makeRedAlien(EntitySystem es, int x, int y, GameState state)
+  {
+    long id = es.newEntity();
+    int fireRate = randomizeSpeed((r.nextInt(15) + 1) * 900);
+    es.putComponent(id, new Position(x, y));
+    es.putComponent(id, new Draw(TerminalColor.VIVID_RED, TerminalColor.DULL_BLACK, 'Y'));
+    es.putComponent(id, new TimedMove(0, 1, true, randomizeMoveDelay(getMoveDelay(state))));
+    es.putComponent(id, new Collision(Collision.Type.ALIEN));
+    es.putComponent(id, new TimedShot(65, '"', TerminalColor.DULL_BLACK, TerminalColor.VIVID_RED, true, fireRate));
+
+    return id;
+  }
+
   private static int getMoveDelay(GameState state)
   {
     int delay = DEFAULT_MOVE_DELAY;
@@ -32,55 +83,30 @@ public final class EntityFactory
     return delay;
   }
 
-  public static long makeYellowAlien(EntitySystem es, int x, int y, GameState state)
+  private static int randomizeSpeed(int baseSpeed)
   {
-    long id = es.newEntity();
-    int fireRate = (r.nextInt(15) + 1) * 700;
-    es.putComponent(id, new Position(x, y));
-    es.putComponent(id, new Draw(TerminalColor.VIVID_YELLOW, TerminalColor.DULL_BLACK, 'T'));
-    es.putComponent(id, new TimedMove(0, 1, true, getMoveDelay(state)));
-    es.putComponent(id, new Collision(Collision.Type.ALIEN));
-    es.putComponent(id, new TimedShot(100, '.', TerminalColor.DULL_BLACK, TerminalColor.VIVID_YELLOW, true, fireRate));
+    int i = r.nextInt(5);
 
-    return id;
+    switch(i)
+    {
+      case 0: return baseSpeed + (baseSpeed / 4);
+      case 1: return baseSpeed + (baseSpeed / 3);
+      case 2: return baseSpeed - (baseSpeed / 6);
+      case 3: return baseSpeed - (baseSpeed / 4);
+      default: return baseSpeed;
+    }
   }
 
-  public static long makeGreenAlien(EntitySystem es, int x, int y, GameState state)
+  private static int randomizeMoveDelay(int baseDelay)
   {
-    long id = es.newEntity();
-    int fireRate = (r.nextInt(15) + 1) * 850;
-    es.putComponent(id, new Position(x, y));
-    es.putComponent(id, new Draw(TerminalColor.VIVID_GREEN, TerminalColor.DULL_BLACK, 'V'));
-    es.putComponent(id, new TimedMove(0, 1, true, getMoveDelay(state)));
-    es.putComponent(id, new Collision(Collision.Type.ALIEN));
-    es.putComponent(id, new TimedShot(50, ':', TerminalColor.DULL_BLACK, TerminalColor.VIVID_GREEN, true, fireRate));
+    int i = r.nextInt(4);
 
-    return id;
-  }
-
-  public static long makeCyanAlien(EntitySystem es, int x, int y, GameState state)
-  {
-    long id = es.newEntity();
-    int fireRate = (r.nextInt(15) + 1) * 900;
-    es.putComponent(id, new Position(x, y));
-    es.putComponent(id, new Draw(TerminalColor.VIVID_CYAN, TerminalColor.DULL_BLACK, 'H'));
-    es.putComponent(id, new TimedMove(0, 1, true, getMoveDelay(state)));
-    es.putComponent(id, new Collision(Collision.Type.ALIEN));
-    es.putComponent(id, new TimedShot(200, 'v', TerminalColor.DULL_BLACK, TerminalColor.VIVID_CYAN, true, fireRate));
-
-    return id;
-  }
-
-  public static long makeRedAlien(EntitySystem es, int x, int y, GameState state)
-  {
-    long id = es.newEntity();
-    int fireRate = (r.nextInt(15) + 1) * 800;
-    es.putComponent(id, new Position(x, y));
-    es.putComponent(id, new Draw(TerminalColor.VIVID_RED, TerminalColor.DULL_BLACK, 'Y'));
-    es.putComponent(id, new TimedMove(0, 1, true, getMoveDelay(state)));
-    es.putComponent(id, new Collision(Collision.Type.ALIEN));
-    es.putComponent(id, new TimedShot(100, '!', TerminalColor.DULL_BLACK, TerminalColor.VIVID_RED, true, fireRate));
-
-    return id;
+    switch (i)
+    {
+      case 0: return baseDelay - (baseDelay / 8);
+      case 1: return baseDelay - (baseDelay / 6);
+      case 2: return baseDelay - (baseDelay / 4);
+      default: return baseDelay;
+    }
   }
 }
