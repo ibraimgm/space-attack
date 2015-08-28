@@ -19,6 +19,7 @@ import spaceattack.main.systems.DrawSystem;
 import spaceattack.main.systems.PlayerShipInputSystem;
 import spaceattack.main.systems.TimedMoveSystem;
 import spaceattack.main.systems.TimedShotSystem;
+import spaceattack.main.util.DrawUtil;
 import spaceattack.terminal.TerminalColor;
 import spaceattack.terminal.VKey;
 
@@ -98,6 +99,7 @@ public abstract class AbstractLevel implements Scenario
   public Scenario quit(GameIO io)
   {
     state.addScore(currentScore());
+    state.recoverHp(state.getCycle() > 5 ? 5 : state.getCycle() - 1);
 
     // back to the menu if we lose
     return state.isGameLost() ? new MainMenu() : null;
@@ -294,80 +296,36 @@ public abstract class AbstractLevel implements Scenario
   private void drawPauseOverlay(GameIO io)
   {
     Screen s = io.mainScreen();
-    int y = (s.getHeight() / 2) - 2;
-
     s.setBackground(TerminalColor.DULL_WHITE);
     s.setForeground(TerminalColor.DULL_BLACK);
 
-    s.drawText(0, y + 0, fillOnCenter(s, ""));
-    s.drawText(0, y + 1, fillOnCenter(s, "PAUSED"));
-    s.drawText(0, y + 2, fillOnCenter(s, ""));
-    s.drawText(0, y + 3, fillOnCenter(s, "[ENTER] - Resume   [ESC] - Quit"));
-    s.drawText(0, y + 4, fillOnCenter(s, ""));
+    DrawUtil.drawBanner(io, "PAUSED", "[ENTER] - Resume   [ESC] - Quit");
   }
 
   private void drawTitleOverlay(GameIO io)
   {
     Screen s = io.mainScreen();
-    int y = (s.getHeight() / 2) - 2;
-
     s.setBackground(TerminalColor.DULL_WHITE);
     s.setForeground(TerminalColor.DULL_BLACK);
 
-    s.drawText(0, y + 0, fillOnCenter(s, ""));
-    s.drawText(0, y + 1, fillOnCenter(s, "LEVEL " + getLevelNumber()));
-    s.drawText(0, y + 2, fillOnCenter(s, ""));
-    s.drawText(0, y + 3, fillOnCenter(s, "~ " + getLevelLongName() + " ~"));
-    s.drawText(0, y + 4, fillOnCenter(s, ""));
+    DrawUtil.drawBanner(io, "LEVEL " + getLevelNumber(), "~ " + getLevelLongName() + " ~");
   }
 
   private void drawWinOverlay(GameIO io)
   {
     Screen s = io.mainScreen();
-    int y = (s.getHeight() / 2) - 2;
-
     s.setBackground(TerminalColor.DULL_YELLOW);
     s.setForeground(TerminalColor.DULL_BLACK);
 
-    s.drawText(0, y + 0, fillOnCenter(s, ""));
-    s.drawText(0, y + 1, fillOnCenter(s, "LEVEL " + getLevelNumber() + " CLEARED!"));
-    s.drawText(0, y + 2, fillOnCenter(s, ""));
-    s.drawText(0, y + 3, fillOnCenter(s, "!!! CONGRATULATIONS !!!"));
-    s.drawText(0, y + 4, fillOnCenter(s, ""));
+    DrawUtil.drawBanner(io, "LEVEL " + getLevelNumber() + " CLEARED!", "!!! CONGRATULATIONS !!!");
   }
 
   private void drawLoseOverlay(GameIO io)
   {
     Screen s = io.mainScreen();
-    int y = (s.getHeight() / 2) - 2;
-
     s.setBackground(TerminalColor.DULL_RED);
     s.setForeground(TerminalColor.DULL_BLACK);
 
-    s.drawText(0, y + 0, fillOnCenter(s, ""));
-    s.drawText(0, y + 1, fillOnCenter(s, "LEVEL " + getLevelNumber() + " FAILED!"));
-    s.drawText(0, y + 2, fillOnCenter(s, ""));
-    s.drawText(0, y + 3, fillOnCenter(s, "--- YOU DIED ---"));
-    s.drawText(0, y + 4, fillOnCenter(s, ""));
-  }
-
-  private String fillOnCenter(Screen screen, String s)
-  {
-    StringBuilder sb = new StringBuilder();
-    int size = screen.getWidth();
-
-    for (int i = 0; i < (size - s.length()) / 2; i++)
-    {
-      sb.append(" ");
-    }
-
-    sb.append(s);
-
-    while (sb.length() < size)
-    {
-      sb.append(" ");
-    }
-
-    return sb.toString();
+    DrawUtil.drawBanner(io, "LEVEL " + getLevelNumber() + " FAILED!", "--- YOU DIED ---");
   }
 }

@@ -35,6 +35,16 @@ public final class GameState
       lose();
   }
 
+  public void recoverHp(int value)
+  {
+    hp = hp + value > MAX_HP ? MAX_HP : hp + value;
+  }
+
+  public void recoverHp()
+  {
+    hp = MAX_HP;
+  }
+
   public String hpBarStr()
   {
     StringBuilder sb = new StringBuilder();

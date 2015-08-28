@@ -38,7 +38,9 @@ public final class Level5 extends AbstractLevel
   @Override
   public Scenario quit(GameIO io)
   {
-    return null;
+    Scenario other = super.quit(io);
+
+    return other != null ? other : new Congratulations(state);
   }
 
   @Override
