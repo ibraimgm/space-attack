@@ -162,12 +162,12 @@ public abstract class AbstractLevel implements Scenario
     }
 
     // magic key to automatically win
-    if (io.peekKey() == VKey.UP_ARROW)
+    /*if (io.peekKey() == VKey.UP_ARROW)
     {
       io.consumeKey();
       state.win();
       return;
-    }
+    }*/
 
     // if we have come this far, update the game state
     es.runLogicSystems(io, delta);
