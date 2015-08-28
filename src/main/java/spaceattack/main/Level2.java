@@ -1,6 +1,7 @@
 package spaceattack.main;
 
 import spaceattack.framework.GameIO;
+import spaceattack.framework.Scenario;
 import spaceattack.framework.Screen;
 import spaceattack.framework.ecs.Category;
 
@@ -55,4 +56,11 @@ public final class Level2 extends AbstractLevel
     return categories.get(0).size() * 15;
   }
 
+  @Override
+  public Scenario quit(GameIO io)
+  {
+    Scenario other = super.quit(io);
+
+    return other != null ? other : new Level3(state);
+  }
 }
